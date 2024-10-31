@@ -1,15 +1,39 @@
+//Função principal que executa o fluxo do jogo de cartas colecionáveis
 fun main() {
     val baralho = Baralho()
-    baralho.carregarCartasDoArquivo("src/main/kotlin/cartas.csv")
+
+    // Carrega as cartas do arquivo CSV e verifica se o baralho foi carregado corretamente
+    baralho.carregarCartasDoArquivo("src/main/kotlin/resources/cartas.csv")
+    if (baralho.cartas.isEmpty()) {
+        println("\nErro: O baralho está vazio. Verifique o arquivo CSV.")
+        return
+    }
+
+    // Embaralha o baralho para iniciar o jogo com cartas em ordem aleatória
     baralho.embaralhar()
 
-    // imprime as cartas
-    for (carta in baralho.cartas) {
-        println(carta.nome)
-        println(carta.descricao)
-        println("Ataque: ${carta.ataque}")
-        println("Defesa: ${carta.defesa}")
-        println("Tipo: ${carta.tipo}")
-        println("------------------")
-    }
+    // Cria dois jogadores para o jogo
+    val jogador1 = Jogador("Jogador 1")
+    val jogador2 = Jogador("Jogador 2")
+
+    // Cria uma instância do jogo com os jogadores e o baralho carregado
+    val jogo = Jogo(jogador1, jogador2, baralho)
+
+    // Distribui cartas iniciais para cada jogador
+    jogo.distribuirCartasIniciais()
+
+    // Exibe as cartas na mão de cada jogador
+    jogo.mostrarMao(jogador1)
+    jogo.mostrarMao(jogador2)
+
+    // Posiciona uma carta monstro para cada jogador no campo
+    jogador1.posicionarMonstro(jogador1.cartasNaMao[0], "ataque")
+    jogador2.posicionarMonstro(jogador2.cartasNaMao[0], "defesa")
+
+    // Simula um turno de ataque entre os jogadores
+    jogo.turno()
+
+    // Exibe a vida dos jogadores após o turno de ataque
+    println("\n${jogador1.nome} vida: ${jogador1.vida}")
+    println("\n${jogador2.nome} vida: ${jogador2.vida}")
 }
