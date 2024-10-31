@@ -1,54 +1,63 @@
 import java.io.File
 import java.io.IOException
 
+//Classe que representa um baralho de cartas em um jogo de cartas colecionáveis
 class Baralho {
+    // Lista mutável de cartas que compõem o baralho
     val cartas: MutableList<Carta> = mutableListOf()
 
-    // ler as cartas do baralaho que estão dentro do arquivo
-    fun lerArquivo(caminhoArquivo:String):List<String>?{
+    // Lê o conteúdo de um arquivo e retorna as linhas como uma lista de strings
+    private fun lerArquivo(caminhoArquivo: String): List<String>? {
         val arquivo = File(caminhoArquivo)
 
-        if(arquivo.exists() && arquivo.isFile){
-            try {
-                return arquivo.bufferedReader().readLines()
-            }catch (e: IOException){
-                println("Erro na leitura do arquivo")
-            }catch (e:NullPointerException){
-                println("Erro: arquivo nulo")
+        // Verifica se o arquivo existe e é válido antes de tentar lê-lo
+        if (arquivo.exists() && arquivo.isFile) {
+            return try {
+                arquivo.bufferedReader().readLines()
+            } catch (e: IOException) {
+                println("\nErro na leitura do arquivo.")
+                null
+            } catch (e: NullPointerException) {
+                println("\nErro: Arquivo nulo.")
+                null
             }
+        } else {
+            println("\nArquivo não encontrado no caminho especificado: $caminhoArquivo")
         }
         return null
     }
 
-    // criar uma lista de cartas a partir do arquivo CSV
-    // FALTA A VERIFICAR SE A LINHA TEM CAMPOS EM BRANCO
+    // Carrega as cartas do arquivo CSV e armazena-as na lista de cartas
     fun carregarCartasDoArquivo(caminhoArquivo: String) {
         val linhasDoArquivo = lerArquivo(caminhoArquivo)
 
-        if (linhasDoArquivo != null) {
-            // Limpa a lista de cartas antes de adicionar as novas
-            cartas.clear()
-
-            // Adiciona as cartas à lista cartas
+        if (!linhasDoArquivo.isNullOrEmpty()) {
+            cartas.clear() // Limpa a lista atual de cartas antes de carregar novas
             cartas.addAll(linhasDoArquivo.mapNotNull { linha ->
                 val partes = linha.split(";")
 
-                // Verifica se a linha tem as informações necessárias
+                // Verifica se a linha contém as partes necessárias para uma carta válida
                 if (partes.size >= 5) {
                     val nome = partes[0]
                     val descricao = partes[1]
-                    val ataque = partes[2].toIntOrNull() ?: 0
-                    val defesa = partes[3].toIntOrNull() ?: 0
+                    val ataque = partes[2].toIntOrNull() ?: 0 // Converte ataque para Int, com 0 como valor padrão
+                    val defesa = partes[3].toIntOrNull() ?: 0 // Converte defesa para Int, com 0 como valor padrão
                     val tipo = partes[4]
 
+                    // Cria uma nova carta com os valores obtidos
                     Carta(nome, descricao, ataque, defesa, tipo)
                 } else {
-                    null // Se a linha não tiver as informações necessárias, retorna null
+                    println("\nLinha inválida no arquivo CSV: $linha")
+                    null // Retorna null para linhas inválidas
                 }
             })
+            println("\nCartas carregadas com sucesso! Total: ${cartas.size}")
+        } else {
+            println("\nErro: Nenhuma linha encontrada no arquivo ou arquivo vazio.")
         }
     }
 
+    // Embaralha as cartas do baralho
     fun embaralhar() {
         cartas.shuffle()
     }
