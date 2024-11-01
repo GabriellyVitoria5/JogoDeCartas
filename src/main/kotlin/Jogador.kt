@@ -2,9 +2,10 @@
 class Jogador(
     val nome: String,
 ) {
-    val cartasNaMao: MutableList<Carta> = mutableListOf()     // Cartas atualmente na mão do jogador
-    val monstrosNoCampo: MutableList<Carta> = mutableListOf() // Monstros posicionados no campo de batalha
-    var vida: Int = 10000                                     // Vida inicial do jogador
+    val cartasNaMao: MutableList<Carta> = mutableListOf()        // Cartas atualmente na mão do jogador
+    val monstrosNoCampo: MutableList<Carta> = mutableListOf()    // Monstros posicionados no campo de batalha
+    var vida: Int = 10000                                        // Vida inicial do jogador
+    val jogadasEscolhidas: MutableList<String> = mutableListOf() // Lista de jogadas escolhidas
 
     // Recebe uma carta na mão do jogador, caso haja espaço
     fun receberCarta(carta: Carta) {
@@ -18,6 +19,40 @@ class Jogador(
     // Verificar se o jogador ainda possui pontos de vida
     fun temVida():Boolean{
         return vida > 0
+    }
+
+    // Controlar as jogadas escolhidas pelo jogador durante a sua vez
+    // FAZER VERICAÇÕES SE A OPÇÃO NÃO FOI ESCOLHIDA MAIS DE UMA VEZ, A OPÇÃO NÃO APARECE NO MENU, MAS ELA AINDA EXECUTA
+    fun jogar(jogo: Jogo) {
+        var fimRodada = false
+
+        do {
+            jogo.imprimirMenuDinamico(this)
+
+            print("\n$nome, digite a opção desejada: ")
+            val op = readLine() ?: ""
+
+            // Verificar caso especial: não pode alterar estado após atacar
+            if ("d" in jogadasEscolhidas && op == "e") {
+                println("Não é possível alterar o estado do monstro após atacar.")
+            } else {
+                jogo.processarJogadas(this, op)
+            }
+
+            // Verificar se a rodada terminou
+            if (op == "f") {
+                fimRodada = true
+            }
+            println("\n----------------------------------------------------------------------")
+
+        } while (!fimRodada)
+
+        limparJogadas() // Limpar as jogadas após a rodada terminar
+    }
+
+    // Limpa as jogadas para a próxima rodada
+    fun limparJogadas() {
+        jogadasEscolhidas.clear()
     }
 
     // Posiciona um monstro no campo de batalha em um estado especificado

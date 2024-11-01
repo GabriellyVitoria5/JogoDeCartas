@@ -22,21 +22,18 @@ fun main() {
     // Distribui cartas iniciais para cada jogador
     jogo.distribuirCartasIniciais()
 
-    // Jogo continua enquanto houver cartas no baralho ou enquanto um dos jogadores não perder toda a vida
-    while(baralho.temCartas() && (jogador1.temVida() && jogador2.temVida())) {
-        // mostrar menu
-        // jogadores fazem suas jogadas
+    // Inicia a partida com os dois jogadores e o baralho definidos
+    jogo.iniciarJogo()
 
-
-        jogador2.vida = 0 //controle só para sair do loop, apagar esse linha depois
-    }
-
-    // Exibe a vida dos jogadores após o turno de ataque
-    println("\n${jogador1.nome} vida: ${jogador1.vida}")
-    println("${jogador2.nome} vida: ${jogador2.vida}")
-
+    // Imprime o resultado do jogo
     jogo.calcularVencedor()
 
+
+
+//    // Exibe a vida dos jogadores após o turno de ataque
+//    println("\n${jogador1.nome} vida: ${jogador1.vida}")
+//    println("${jogador2.nome} vida: ${jogador2.vida}")
+//
 //    // Exibe as cartas na mão de cada jogador
 //    jogo.mostrarMao(jogador1)
 //    jogo.mostrarMao(jogador2)
