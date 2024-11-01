@@ -6,7 +6,7 @@ class Jogador(
     val monstrosNoCampo: MutableList<Carta> = mutableListOf() // Monstros posicionados no campo de batalha
     var vida: Int = 10000                                     // Vida inicial do jogador
 
-    //Recebe uma carta na mão do jogador, caso haja espaço
+    // Recebe uma carta na mão do jogador, caso haja espaço
     fun receberCarta(carta: Carta) {
         if (cartasNaMao.size < 10) {
             cartasNaMao.add(carta)
@@ -15,7 +15,12 @@ class Jogador(
         }
     }
 
-    //Posiciona um monstro no campo de batalha em um estado especificado
+    // Verificar se o jogador ainda possui pontos de vida
+    fun temVida():Boolean{
+        return vida > 0
+    }
+
+    // Posiciona um monstro no campo de batalha em um estado especificado
     fun posicionarMonstro(carta: Carta, estado: String) {
         if (monstrosNoCampo.size < 5) {
             carta.estado = estado // Define o estado inicial do monstro
@@ -27,7 +32,7 @@ class Jogador(
         }
     }
 
-    //Realiza um ataque contra o monstro de um jogador oponente
+    // Realiza um ataque contra o monstro de um jogador oponente
     fun atacar(monstroAtacante: Carta, oponente: Jogador, monstroDefensor: Carta) {
         if (monstroAtacante.estado == "ataque") {
             // Verifica se o ataque é maior que a defesa do monstro defensor

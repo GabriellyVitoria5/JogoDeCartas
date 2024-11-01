@@ -39,4 +39,16 @@ class Jogo(
             println("\nUm dos jogadores não possui monstros no campo para atacar.")
         }
     }
+
+    // Calcular o vencedor do jogo pela quantidade de vida dos jogadores
+    fun calcularVencedor() {
+        val vencedor: (Jogador, Jogador) -> String = { jogador1, jogador2 ->
+            when {
+                jogador1.vida > jogador2.vida -> "${jogador1.nome} venceu!"
+                jogador2.vida > jogador1.vida -> "${jogador2.nome} venceu!"
+                else -> "O jogo terminou em empate!"
+            }
+        }
+        println("\nResultado do jogo: ${vencedor(jogador1, jogador2)}")
+    }
 }

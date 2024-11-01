@@ -61,4 +61,9 @@ class Baralho {
     fun embaralhar() {
         cartas.shuffle()
     }
+
+    // Verifica se ainda há cartas no baralho disponíveis para comprar
+    fun temCartas(): Boolean{
+        return cartas.isNotEmpty()
+    }
 }
