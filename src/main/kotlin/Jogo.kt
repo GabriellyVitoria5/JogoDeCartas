@@ -38,7 +38,7 @@ class Jogo(
         when (op.lowercase()) {
             "a" -> {
                 println("${jogador.nome} escolheu posicionar um novo monstro no tabuleiro.")
-                //pocionarMonstro()
+                jogador.posicionarMonstro()
                 jogador.jogadasEscolhidas.add("a")
             }
             "b" -> {
