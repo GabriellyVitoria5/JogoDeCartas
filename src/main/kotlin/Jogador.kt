@@ -27,12 +27,20 @@ class Jogador(
         var fimRodada = false
 
         do {
+            // Mostra a mão do jogador no começo de cada rodada
+            println("\nCartas na mão de $nome:")
+            for (carta in cartasNaMao) {
+                println("- ${carta.nome}: ${carta.descricao}")
+            }
+
+            // Exibe o menu de jogadas
             jogo.imprimirMenuDinamico(this)
 
+            // Solicita a escolha do jogador
             print("\n$nome, digite a opção desejada: ")
-            val op = readLine() ?: ""
+            val op = readlnOrNull() ?: ""
 
-            // Verificar caso especial: não pode alterar estado após atacar
+            // Verifica se o jogador já realizou um ataque e tenta mudar o estado do monstro
             if ("d" in jogadasEscolhidas && op == "e") {
                 println("Não é possível alterar o estado do monstro após atacar.")
             } else {
@@ -51,19 +59,44 @@ class Jogador(
     }
 
     // Limpa as jogadas para a próxima rodada
-    fun limparJogadas() {
+    private fun limparJogadas() {
         jogadasEscolhidas.clear()
     }
 
-    // Posiciona um monstro no campo de batalha em um estado especificado
-    fun posicionarMonstro(carta: Carta, estado: String) {
-        if (monstrosNoCampo.size < 5) {
-            carta.estado = estado // Define o estado inicial do monstro
-            monstrosNoCampo.add(carta)
-            cartasNaMao.remove(carta) // Remove a carta da mão do jogador
-            println("\n$nome posicionou ${carta.nome} no campo em estado de $estado.")
+    fun posicionarMonstro() {
+        // TODO: ainda não está filtrando somente as cartas "monstro"
+        // Filtra as cartas que são do tipo "monstro"
+        val cartasMonstro = cartasNaMao.filter {
+            it.tipo.trim().equals("monstro", ignoreCase = true)
+        }
+
+        if (cartasMonstro.isEmpty()) {
+            println("Você não possui cartas do tipo monstro para posicionar.")
+            return
+        }
+
+        println("Escolha uma carta para posicionar como monstro:")
+
+        // Exibe todas as cartas da mão com índice para seleção
+        cartasNaMao.forEachIndexed { index, carta ->
+            println("Opção ${index + 1}: ${carta.nome} - ${carta.tipo} - ${carta.descricao}")
+        }
+
+        // Obtém a escolha do usuário
+        println("Digite o número da carta que deseja posicionar:")
+        val escolha = readlnOrNull()?.toIntOrNull()
+
+        if (escolha != null && escolha in 1..cartasNaMao.size) {
+            val cartaEscolhida = cartasNaMao[escolha - 1]
+
+            // Marque a carta como posicionada
+            cartaEscolhida.posicionada = true
+            println("Você posicionou ${cartaEscolhida.nome} como monstro.")
+
+            // Remove a carta da mão
+            cartasNaMao.removeAt(escolha - 1)
         } else {
-            println("\nLimite de monstros no campo atingido!")
+            println("Escolha inválida.")
         }
     }
 
