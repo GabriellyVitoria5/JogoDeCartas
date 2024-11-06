@@ -1,4 +1,4 @@
-//Função principal que executa o fluxo do jogo de cartas colecionáveis
+// Função principal que executa o fluxo do jogo de cartas colecionáveis
 fun main() {
     val baralho = Baralho()
 
@@ -22,27 +22,30 @@ fun main() {
     // Distribui cartas iniciais para cada jogador
     jogo.distribuirCartasIniciais()
 
-    // Inicia a partida com os dois jogadores e o baralho definidos
-    jogo.iniciarJogo()
+    // Loop do jogo, onde os jogadores alternam turnos até que um deles perca toda a vida
+    while (jogador1.temVida() && jogador2.temVida()) {
+        // Exibe o estado do jogo para ambos os jogadores antes de iniciar o turno
+        println("\n---------------------------------------------------")
+        println("\nEstado atual do jogo:")
+        println("${jogador1.nome} - Vida: ${jogador1.vida}")
+        jogo.mostrarMao(jogador1)
 
-    // Imprime o resultado do jogo
+        println("\n${jogador2.nome} - Vida: ${jogador2.vida}")
+        jogo.mostrarMao(jogador2)
+
+        println("\n---------------------------------------------------")
+
+        // Inicia o turno para o jogador 1
+        println("\nTurno de ${jogador1.nome}:")
+        jogador1.jogar(jogo)
+        if (!jogador2.temVida()) break // Verifica se o jogador 2 ainda tem vida após o turno
+
+        // Inicia o turno para o jogador 2
+        println("\nTurno de ${jogador2.nome}:")
+        jogador2.jogar(jogo)
+        if (!jogador1.temVida()) break // Verifica se o jogador 1 ainda tem vida após o turno
+    }
+
+    // Exibe o resultado do jogo ao final
     jogo.calcularVencedor()
-
-
-
-//    // Exibe a vida dos jogadores após o turno de ataque
-//    println("\n${jogador1.nome} vida: ${jogador1.vida}")
-//    println("${jogador2.nome} vida: ${jogador2.vida}")
-//
-//    // Exibe as cartas na mão de cada jogador
-//    jogo.mostrarMao(jogador1)
-//    jogo.mostrarMao(jogador2)
-//
-//    // Posiciona uma carta monstro para cada jogador no campo
-//    jogador1.posicionarMonstro(jogador1.cartasNaMao[0], "ataque")
-//    jogador2.posicionarMonstro(jogador2.cartasNaMao[0], "defesa")
-//
-//    // Simula um turno de ataque entre os jogadores
-//    jogo.turno()
-
 }
