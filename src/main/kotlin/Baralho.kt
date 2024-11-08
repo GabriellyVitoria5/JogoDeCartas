@@ -44,8 +44,12 @@ class Baralho {
                     val defesa = partes[3].toIntOrNull() ?: 0 // Converte defesa para Int, com 0 como valor padrão
                     val tipo = partes[4]
 
-                    // Cria uma nova carta com os valores obtidos
-                    Carta(nome, descricao, ataque, defesa, tipo)
+                    // Cria a carta correta com base no tipo
+                    when (tipo) {
+                        "monstro" -> CartaMonstro(nome, descricao, ataque, defesa)
+                        "equipamento" -> CartaEquipamento(nome, descricao, ataque, defesa)
+                        else -> null
+                    }
                 } else {
                     println("\nLinha inválida no arquivo CSV: $linha")
                     null // Retorna null para linhas inválidas

@@ -3,7 +3,7 @@ class Jogador(
     val nome: String,
 ) {
     val cartasNaMao: MutableList<Carta> = mutableListOf()        // Cartas atualmente na mão do jogador
-    val monstrosNoCampo: MutableList<Carta> = mutableListOf()    // Monstros posicionados no campo de batalha
+    val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()    // Monstros posicionados no campo de batalha
     var vida: Int = 10000                                        // Vida inicial do jogador
     val jogadasEscolhidas: MutableList<String> = mutableListOf() // Lista de jogadas escolhidas
 
@@ -30,7 +30,7 @@ class Jogador(
             // Mostra a mão do jogador no começo de cada rodada
             println("\nCartas na mão de $nome:")
             for (carta in cartasNaMao) {
-                println("- ${carta.nome}: ${carta.descricao}")
+                println("- ${carta.nome}: ${carta.descricao} - A:${carta.ataque}, D: ${carta.defesa}")
             }
 
             // Exibe o menu de jogadas
@@ -64,44 +64,44 @@ class Jogador(
     }
 
     fun posicionarMonstro() {
-        // TODO: ainda não está filtrando somente as cartas "monstro"
-        // Filtra as cartas que são do tipo "monstro"
-        val cartasMonstro = cartasNaMao.filter {
-            it.tipo.trim().equals("monstro", ignoreCase = true)
-        }
+        //Filtrar cartas de monstro da mão do jogador
+        val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
 
         if (cartasMonstro.isEmpty()) {
             println("Você não possui cartas do tipo monstro para posicionar.")
             return
         }
 
-        println("Escolha uma carta para posicionar como monstro:")
+        println("\nEscolha uma carta para posicionar como monstro:")
 
         // Exibe todas as cartas da mão com índice para seleção
-        cartasNaMao.forEachIndexed { index, carta ->
+        cartasMonstro.forEachIndexed { index, carta ->
             println("Opção ${index + 1}: ${carta.nome} - ${carta.tipo} - ${carta.descricao}")
         }
 
         // Obtém a escolha do usuário
-        println("Digite o número da carta que deseja posicionar:")
+        print("\nDigite o número da carta que deseja posicionar: ")
         val escolha = readlnOrNull()?.toIntOrNull()
 
         if (escolha != null && escolha in 1..cartasNaMao.size) {
-            val cartaEscolhida = cartasNaMao[escolha - 1]
+            val cartaEscolhida = cartasMonstro[escolha - 1]
+
+            // Adiciona a carta de monstro no tabuleiro
+            monstrosNoCampo.add(cartaEscolhida)
 
             // Marque a carta como posicionada
             cartaEscolhida.posicionada = true
             println("Você posicionou ${cartaEscolhida.nome} como monstro.")
 
             // Remove a carta da mão
-            cartasNaMao.removeAt(escolha - 1)
+            cartasNaMao.removeAt((escolha - 1))
         } else {
             println("Escolha inválida.")
         }
     }
 
     // Realiza um ataque contra o monstro de um jogador oponente
-    fun atacar(monstroAtacante: Carta, oponente: Jogador, monstroDefensor: Carta) {
+    fun atacar(monstroAtacante: CartaMonstro, oponente: Jogador, monstroDefensor: Carta) {
         if (monstroAtacante.estado == "ataque") {
             // Verifica se o ataque é maior que a defesa do monstro defensor
             if (monstroAtacante.ataque > monstroDefensor.defesa) {

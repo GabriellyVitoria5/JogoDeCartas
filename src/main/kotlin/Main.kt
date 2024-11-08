@@ -26,7 +26,7 @@ fun main() {
     while (jogador1.temVida() && jogador2.temVida()) {
         // Exibe o estado do jogo para ambos os jogadores antes de iniciar o turno
         println("\n---------------------------------------------------")
-        println("\nEstado atual do jogo:")
+        println("\nEstado atual do jogo\n:")
         println("${jogador1.nome} - Vida: ${jogador1.vida}")
         jogo.mostrarMao(jogador1)
 
