@@ -36,27 +36,22 @@ class Jogo(
             "a" -> {
                 println("${jogador.nome} escolheu posicionar um novo monstro no tabuleiro.")
                 jogador.posicionarMonstro()
-                jogador.jogadasEscolhidas.add("a")
             }
             "b" -> {
                 println("${jogador.nome} escolheu equipar um monstro com uma carta de equipamento.")
                 //equiparMonstro()
-                jogador.jogadasEscolhidas.add("b")
             }
             "c" -> {
                 println("${jogador.nome} escolheu descartar uma carta da mão.")
                 jogador.descartar()
-                jogador.jogadasEscolhidas.add("c")
             }
             "d" -> {
                 println("${jogador.nome} escolheu realizar um ataque contra o oponente.")
                 //atacarOponente()
-                jogador.jogadasEscolhidas.add("d")
             }
             "e" -> {
                 println("${jogador.nome} escolheu alterar o estado de um monstro (ataque/defesa).")
                 //atacarOponente()
-                jogador.jogadasEscolhidas.add("e")
             }
             "f" -> {
                 println("${jogador.nome} passou a vez.")

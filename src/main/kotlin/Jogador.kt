@@ -62,10 +62,7 @@ class Jogador(
 
         do {
             // Mostra a mão do jogador no começo de cada rodada
-            println("\nCartas na mão de $nome:")
-            for (carta in cartasNaMao) {
-                println(carta)
-            }
+            jogo.mostrarMao(this)
 
             // Exibe o menu de jogadas
             jogo.imprimirMenuDinamico(this)
@@ -74,17 +71,26 @@ class Jogador(
             print("\n$nome, digite a opção desejada: ")
             val op = readlnOrNull() ?: ""
 
-            // Verifica se o jogador já realizou um ataque e tenta mudar o estado do monstro
-            if ("d" in jogadasEscolhidas && op == "e") {
-                println("Não é possível alterar o estado do monstro após atacar.")
-            } else {
-                jogo.processarJogadas(this, op)
+            if (op in jogadasEscolhidas) {
+                println("Você já escolheu essa opção. Por favor, escolha outra.")
+
+            } else{
+                // Guardar a jogada escolhida
+                jogadasEscolhidas.add(op)
+
+                // Verifica se o jogador já realizou um ataque e tenta mudar o estado do monstro
+                if ("d" in jogadasEscolhidas && op == "e") {
+                    println("Não é possível alterar o estado do monstro após atacar.")
+                } else {
+                    jogo.processarJogadas(this, op)
+                }
+
+                // Verificar se a rodada terminou
+                if (op == "f") {
+                    fimRodada = true
+                }
             }
 
-            // Verificar se a rodada terminou
-            if (op == "f") {
-                fimRodada = true
-            }
             println("\n----------------------------------------------------------------------")
 
         } while (!fimRodada)
