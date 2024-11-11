@@ -1,4 +1,3 @@
-// Classe que representa uma carta de equipamento
 class CartaEquipamento(
     nome: String,
     descricao: String,

@@ -1,11 +1,10 @@
-//Classe que representa um jogador em um jogo de cartas colecionáveis.
 class Jogador(
     val nome: String,
 ) {
-    val cartasNaMao: MutableList<Carta> = mutableListOf()        // Cartas atualmente na mão do jogador
-    val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()    // Monstros posicionados no campo de batalha
-    var vida: Int = 10000                                        // Vida inicial do jogador
-    val jogadasEscolhidas: MutableList<String> = mutableListOf() // Lista de jogadas escolhidas
+    val cartasNaMao: MutableList<Carta> = mutableListOf()
+    val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()
+    var vida: Int = 10000
+    val jogadasEscolhidas: MutableList<String> = mutableListOf()
 
     // Aducionar uma carta na mão do jogador, caso haja espaço
     fun comprarCarta(baralho: MutableList<Carta>) {
@@ -13,14 +12,14 @@ class Jogador(
             if (cartasNaMao.size < 10) {
                 cartasNaMao.add(baralho.removeAt(0))
             } else {
+                // Não sai do loop até descartar para jogador não ter mais que 10 cartas na mão
                 while (cartasNaMao.size == 10) {
                     println("\n$nome atingiu o limite de 10 cartas na mão. Descarte uma carta antes de receber outra.")
                     descartar()
                 }
                 cartasNaMao.add(baralho.removeAt(0))
             }
-        }
-        else{
+        } else{
             println("\nBaralho não possui mais cartas para comprar.")
         }
     }
@@ -37,9 +36,11 @@ class Jogador(
             println("Opção ${index + 1}: ${carta.nome} - ${carta.descricao} - A:${carta.ataque}, D: ${carta.defesa} ")
         }
 
+        // Jogador escolhe uma carta para descartar
         print("\nDigite o número da carta que deseja descartar: ")
         val escolha = readlnOrNull()?.toIntOrNull()
 
+        // Retirar carta da não
         if (escolha != null && escolha in 1..cartasNaMao.size) {
             val cartaDescartada = cartasNaMao.removeAt(escolha - 1)
             println("$nome descartou a carta: ${cartaDescartada.nome}")
@@ -96,6 +97,7 @@ class Jogador(
         jogadasEscolhidas.clear()
     }
 
+    // Jogador adiciona um monstro no campo
     fun posicionarMonstro() {
         //Filtrar cartas de monstro da mão do jogador
         val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
@@ -105,9 +107,8 @@ class Jogador(
             return
         }
 
-        println("\nEscolha uma carta para posicionar como monstro:")
-
         // Exibe todas as cartas da mão com índice para seleção
+        println("\nEscolha uma carta para posicionar como monstro:")
         cartasMonstro.forEachIndexed { index, carta ->
             println("Opção ${index + 1}: ${carta.nome} - ${carta.tipo} - ${carta.descricao}")
         }

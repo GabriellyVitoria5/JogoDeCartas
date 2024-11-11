@@ -1,4 +1,3 @@
-// Classe base que representa uma carta genérica
 open class Carta(
     val nome: String,
     val descricao: String,
@@ -6,7 +5,7 @@ open class Carta(
     val defesa: Int,
     val tipo: String
 ) {
-    // Retorna uma representação em string da carta
+    // Representação personalizada de uma carta
     override fun toString(): String {
         return """
             |Nome: $nome
@@ -14,6 +13,6 @@ open class Carta(
             |Ataque: $ataque
             |Defesa: $defesa
             |Tipo: $tipo
-        """.trimMargin()
+        """.trimMargin() // Remove margens para melhor formatação
     }
 }

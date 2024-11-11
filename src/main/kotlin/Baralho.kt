@@ -1,9 +1,7 @@
 import java.io.File
 import java.io.IOException
 
-//Classe que representa um baralho de cartas em um jogo de cartas colecionáveis
 class Baralho {
-    // Lista mutável de cartas que compõem o baralho
     val cartas: MutableList<Carta> = mutableListOf()
 
     // Lê o conteúdo de um arquivo e retorna as linhas como uma lista de strings

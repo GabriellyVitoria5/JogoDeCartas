@@ -1,19 +1,16 @@
-// Classe que representa um jogo de cartas colecionáveis entre dois jogadores
 class Jogo(
     private val jogador1: Jogador,
     private val jogador2: Jogador,
     private val baralho: Baralho
 ) {
 
-    // Distribui cartas iniciais para os dois jogadores
+    // Distribui 5 cartas iniciais para cada jogador no começo da partida
     fun distribuirCartasIniciais() {
-        // Verifica se o baralho possui cartas suficientes
         if (baralho.cartas.size < 10) {
             println("\nErro: O baralho não tem cartas suficientes para distribuir.")
             return
         }
 
-        // Cada jogador recebe 5 cartas no começo da partida
         for (i in 1..5) {
             jogador1.comprarCarta(baralho.cartas)
             jogador2.comprarCarta(baralho.cartas)
@@ -80,7 +77,7 @@ class Jogo(
             println("\nRodada de ${jogador2.nome}:")
             jogador2.jogar(this)
 
-            jogador2.vida = 0 // CONTROLE PARA FINALIZAR O JOGO, APAGAR ESSA LINHA DEPOIS
+            jogador2.vida = 0 // TODO só um controle para acabar com o loop, apagar depois
         }
     }
 
@@ -95,10 +92,9 @@ class Jogo(
 
     // Executa um turno no jogo, onde o jogador 1 ataca o jogador 2
     fun turno() {
-        // Verifica se ambos os jogadores têm monstros no campo
         if (jogador1.monstrosNoCampo.isNotEmpty() && jogador2.monstrosNoCampo.isNotEmpty()) {
-            val monstroAtacante = jogador1.monstrosNoCampo[0] // Primeiro monstro do jogador 1
-            val monstroDefensor = jogador2.monstrosNoCampo[0] // Primeiro monstro do jogador 2
+            val monstroAtacante = jogador1.monstrosNoCampo[0]
+            val monstroDefensor = jogador2.monstrosNoCampo[0]
             jogador1.atacar(monstroAtacante, jogador2, monstroDefensor) // Jogador 1 ataca Jogador 2
         } else {
             println("\nUm dos jogadores não possui monstros no campo para atacar.")

@@ -1,4 +1,3 @@
-// Classe que representa uma carta de monstro
 class CartaMonstro(
     nome: String,
     descricao: String,
@@ -6,12 +5,10 @@ class CartaMonstro(
     defesa: Int
 ) : Carta(nome, descricao, ataque, defesa, "Monstro") {
 
-    // Estado começa como nulo, mas será definido ("ataque" ou "defesa") quando o monstro for posicionado
-    var estado: String? = null
-
+    var estado: String? = null // Estado começa como nulo, mas será definido ("ataque" ou "defesa") quando o monstro for posicionado
     var posicionada: Boolean = false // Indica se a carta está em campo
 
-    // Sobrescreve a representação em string para incluir o estado
+    // Incluir estado do monstro
     override fun toString(): String {
         return """
             |Nome: $nome
@@ -20,6 +17,6 @@ class CartaMonstro(
             |Defesa: $defesa
             |Tipo: $tipo
             |Estado: $estado
-        """.trimMargin()
+        """.trimMargin() // Remove margens para melhor formatação
     }
 }

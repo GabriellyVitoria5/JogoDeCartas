@@ -1,4 +1,3 @@
-// Função principal que executa o fluxo do jogo de cartas colecionáveis
 fun main() {
     val baralho = Baralho()
 
@@ -35,17 +34,17 @@ fun main() {
 
         println("\n---------------------------------------------------")
 
-        // Inicia o turno para o jogador 1
+        // Inicia o turno para o jogador 1 - compra uma carta e começa a jogar se jogadores tiverem vida
         println("\nTurno de ${jogador1.nome}:")
-        jogador1.comprarCarta(baralho.cartas) // Começa o turno comprando uma carta
+        jogador1.comprarCarta(baralho.cartas)
         jogador1.jogar(jogo)
-        if (!jogador2.temVida()) break // Verifica se o jogador 2 ainda tem vida após o turno
+        if (!jogador2.temVida()) break
 
-        // Inicia o turno para o jogador 2
+        // Inicia o turno para o jogador 2 - compra uma carta e começa a jogar se jogadores tiverem vida
         println("\nTurno de ${jogador2.nome}:")
-        jogador2.comprarCarta(baralho.cartas) // Começa o turno comprando uma carta
+        jogador2.comprarCarta(baralho.cartas)
         jogador2.jogar(jogo)
-        if (!jogador1.temVida()) break // Verifica se o jogador 1 ainda tem vida após o turno
+        if (!jogador1.temVida()) break
     }
 
     // Exibe o resultado do jogo ao final
