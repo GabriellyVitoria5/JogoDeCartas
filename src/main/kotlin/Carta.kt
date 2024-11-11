@@ -7,12 +7,6 @@ open class Carta(
 ) {
     // Representação personalizada de uma carta
     override fun toString(): String {
-        return """
-            |Nome: $nome
-            |Descrição: $descricao
-            |Ataque: $ataque
-            |Defesa: $defesa
-            |Tipo: $tipo
-        """.trimMargin() // Remove margens para melhor formatação
+        return "- $tipo $nome: $descricao - A:$ataque, D:$defesa"
     }
 }

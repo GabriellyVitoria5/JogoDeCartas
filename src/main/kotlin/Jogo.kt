@@ -84,10 +84,11 @@ class Jogo(
     // Mostra as cartas na mão de um jogador
     fun mostrarMao(jogador: Jogador) {
         println("\n${jogador.nome} tem as seguintes cartas na mão:")
+        println("\nTipo | Nome | Descrição | Ataque | Defesa | Estado do monstro")
         for (carta in jogador.cartasNaMao) {
-            println("\n" + carta)
-            println("---------------------------------------------")
+            println(carta)
         }
+        println("---------------------------------------------")
     }
 
     // Executa um turno no jogo, onde o jogador 1 ataca o jogador 2

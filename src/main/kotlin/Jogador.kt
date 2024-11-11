@@ -33,7 +33,7 @@ class Jogador(
 
         println("\nEscolha uma carta para descartar:")
         cartasNaMao.forEachIndexed { index, carta ->
-            println("Opção ${index + 1}: ${carta.nome} - ${carta.descricao} - A:${carta.ataque}, D: ${carta.defesa} ")
+            println("Opção ${index + 1}: $carta")
         }
 
         // Jogador escolhe uma carta para descartar
@@ -64,7 +64,7 @@ class Jogador(
             // Mostra a mão do jogador no começo de cada rodada
             println("\nCartas na mão de $nome:")
             for (carta in cartasNaMao) {
-                println("- ${carta.nome}: ${carta.descricao} - A:${carta.ataque}, D: ${carta.defesa}")
+                println(carta)
             }
 
             // Exibe o menu de jogadas
