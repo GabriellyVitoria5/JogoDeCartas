@@ -7,13 +7,46 @@ class Jogador(
     var vida: Int = 10000                                        // Vida inicial do jogador
     val jogadasEscolhidas: MutableList<String> = mutableListOf() // Lista de jogadas escolhidas
 
-    // Recebe uma carta na mão do jogador, caso haja espaço
-    fun receberCarta(carta: Carta) {
-        if (cartasNaMao.size < 10) {
-            cartasNaMao.add(carta)
-        } else {
-            println("\n$nome já possui 10 cartas na mão. Descarte uma carta antes de receber outra.")
+    // Aducionar uma carta na mão do jogador, caso haja espaço
+    fun comprarCarta(baralho: MutableList<Carta>) {
+        if(baralho.isNotEmpty()){
+            if (cartasNaMao.size < 10) {
+                cartasNaMao.add(baralho.removeAt(0))
+            } else {
+                while (cartasNaMao.size == 10) {
+                    println("\n$nome atingiu o limite de 10 cartas na mão. Descarte uma carta antes de receber outra.")
+                    descartar()
+                }
+                cartasNaMao.add(baralho.removeAt(0))
+            }
         }
+        else{
+            println("\nBaralho não possui mais cartas para comprar.")
+        }
+    }
+
+    // Remover uma carta escolhida da mão do jogador
+    fun descartar(){
+        if (cartasNaMao.size == 0) {
+            println("\n$nome não tem cartas na mão para descartar.")
+            return
+        }
+
+        println("\nEscolha uma carta para descartar:")
+        cartasNaMao.forEachIndexed { index, carta ->
+            println("Opção ${index + 1}: ${carta.nome} - ${carta.descricao} - A:${carta.ataque}, D: ${carta.defesa} ")
+        }
+
+        print("\nDigite o número da carta que deseja descartar: ")
+        val escolha = readlnOrNull()?.toIntOrNull()
+
+        if (escolha != null && escolha in 1..cartasNaMao.size) {
+            val cartaDescartada = cartasNaMao.removeAt(escolha - 1)
+            println("$nome descartou a carta: ${cartaDescartada.nome}")
+        } else {
+            println("Escolha inválida.")
+        }
+
     }
 
     // Verificar se o jogador ainda possui pontos de vida
@@ -22,7 +55,7 @@ class Jogador(
     }
 
     // Controlar as jogadas escolhidas pelo jogador durante a sua vez
-    // FAZER VERICAÇÕES SE A OPÇÃO NÃO FOI ESCOLHIDA MAIS DE UMA VEZ, A OPÇÃO NÃO APARECE NO MENU, MAS ELA AINDA EXECUTA
+    // TODO verificar se a opção no menu foi escolhida mais de uma vez, a opção pode não aparecer no menu, mas ainda dá pra utilizar
     fun jogar(jogo: Jogo) {
         var fimRodada = false
 

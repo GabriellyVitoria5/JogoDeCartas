@@ -13,10 +13,10 @@ class Jogo(
             return
         }
 
-        // Cada jogador recebe 5 cartas
+        // Cada jogador recebe 5 cartas no começo da partida
         for (i in 1..5) {
-            jogador1.receberCarta(baralho.cartas.removeAt(0))
-            jogador2.receberCarta(baralho.cartas.removeAt(0))
+            jogador1.comprarCarta(baralho.cartas)
+            jogador2.comprarCarta(baralho.cartas)
         }
     }
 
@@ -33,7 +33,7 @@ class Jogo(
     }
 
     // Processar a jogada escolhida pelo jogador e chamar métodos para cada escolha
-    // FALTA IMPLEMENTAR OS MÉTODOS
+    // TODO terminar de implementar os métodos
     fun processarJogadas(jogador: Jogador, op: String) {
         when (op.lowercase()) {
             "a" -> {
@@ -48,7 +48,7 @@ class Jogo(
             }
             "c" -> {
                 println("${jogador.nome} escolheu descartar uma carta da mão.")
-                //descartar()
+                jogador.descartar()
                 jogador.jogadasEscolhidas.add("c")
             }
             "d" -> {

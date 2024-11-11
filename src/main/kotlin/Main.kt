@@ -26,7 +26,7 @@ fun main() {
     while (jogador1.temVida() && jogador2.temVida()) {
         // Exibe o estado do jogo para ambos os jogadores antes de iniciar o turno
         println("\n---------------------------------------------------")
-        println("\nEstado atual do jogo\n:")
+        println("\nEstado atual do jogo:\n")
         println("${jogador1.nome} - Vida: ${jogador1.vida}")
         jogo.mostrarMao(jogador1)
 
@@ -37,11 +37,13 @@ fun main() {
 
         // Inicia o turno para o jogador 1
         println("\nTurno de ${jogador1.nome}:")
+        jogador1.comprarCarta(baralho.cartas) // Começa o turno comprando uma carta
         jogador1.jogar(jogo)
         if (!jogador2.temVida()) break // Verifica se o jogador 2 ainda tem vida após o turno
 
         // Inicia o turno para o jogador 2
         println("\nTurno de ${jogador2.nome}:")
+        jogador2.comprarCarta(baralho.cartas) // Começa o turno comprando uma carta
         jogador2.jogar(jogo)
         if (!jogador1.temVida()) break // Verifica se o jogador 1 ainda tem vida após o turno
     }
