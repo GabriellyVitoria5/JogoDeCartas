@@ -60,8 +60,11 @@ class Jogador(
         var fimRodada = false
 
         do {
-            // Mostra a mão do jogador no começo de cada rodada
+            // Imprime as cartas da mão do jogador no começo de cada rodada
             jogo.mostrarMao(this)
+
+            // Imprime monstros posicionados no tabuleiro do jogador
+            mostrarMonstroTabuleiro()
 
             // Exibe o menu de jogadas
             jogo.imprimirMenuDinamico(this)
@@ -102,10 +105,26 @@ class Jogador(
         jogadasEscolhidas.clear()
     }
 
-    // Jogador adiciona um monstro no campo
+    // Exibe monstros posicionados no tabuleiro de um jogador
+    fun mostrarMonstroTabuleiro(){
+        println("\nMonstros no tabuleiro de $nome")
+
+        if(monstrosNoCampo.isEmpty()){
+            println("Nenhum monstro posicionado")
+            return
+        }
+
+        println("\nNome | Ataque | Defesa | Estado do monstro")
+        for (monstro in monstrosNoCampo) {
+            println("[ ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa} - ${monstro.estado} ]")
+        }
+        println("---------------------------------------------")
+    }
+
+    // Jogador adiciona um monstro no campo e define o seu estado (ataque ou defesa)
     fun posicionarMonstro() {
         if(monstrosNoCampo.size < 5){
-            //Filtrar cartas de monstro da mão do jogador
+            // Filtrar cartas de monstro da mão do jogador
             val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
 
             if (cartasMonstro.isEmpty()) {
@@ -113,7 +132,7 @@ class Jogador(
                 return
             }
 
-            // jogador fica em loop enquanto não escolher um monstro para posicionar
+            // Loop enquanto jogador não escolher um monstro para posicionar
             val numCartasMao = cartasNaMao.size
             while (cartasNaMao.size == numCartasMao) {
 
@@ -123,7 +142,7 @@ class Jogador(
                     println("Opção ${index + 1}: ${carta.nome} - ${carta.descricao} - A:${carta.ataque}, D:${carta.defesa}")
                 }
 
-                // Obtém a escolha do usuário
+                // Obtém a escolha do jogador
                 print("\nDigite o número da carta que deseja posicionar: ")
                 val escolha = readlnOrNull()?.toIntOrNull()
 
@@ -140,11 +159,15 @@ class Jogador(
                     // Remove a carta da mão
                     cartasNaMao.remove(cartaEscolhida)
 
+                    // Loop enquanto jogador não escolher o estado do monstro
                     var estadoDefinido = false
                     while (!estadoDefinido) {
+
+                        // Obtém a escolha
                         print("\nDefina o estado do monstro como atacante ou defensor (A ou D): ")
                         val estado = readlnOrNull()?.lowercase()
 
+                        // Define o estado e sai do loop
                         when (estado) {
                             "a" -> {
                                 cartaEscolhida.estado = "Ataque"

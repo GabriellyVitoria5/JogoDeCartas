@@ -34,11 +34,14 @@ fun main() {
         // Exibe o estado do jogo para ambos os jogadores antes de iniciar o turno
         println("\n---------------------------------------------")
         println("\n${GREEN}Estado do jogo - $numTurno° partida:${RESET}\n")
+
         println("${jogador1.nome} - Vida: ${jogador1.vida}")
         jogo.mostrarMao(jogador1)
+        jogador1.mostrarMonstroTabuleiro()
 
         println("\n${jogador2.nome} - Vida: ${jogador2.vida}")
         jogo.mostrarMao(jogador2)
+        jogador2.mostrarMonstroTabuleiro()
 
         println("\n---------------------------------------------${RESET}")
 
