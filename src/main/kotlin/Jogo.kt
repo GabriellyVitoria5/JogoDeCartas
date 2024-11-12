@@ -49,7 +49,7 @@ class Jogo(
             }
             "b" -> {
                 println("${jogador.nome} escolheu equipar um monstro com uma carta de equipamento.")
-                //equiparMonstro()
+                jogador.equiparMonstro()
             }
             "c" -> {
                 println("${jogador.nome} escolheu descartar uma carta da mão.")
