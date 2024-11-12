@@ -56,7 +56,6 @@ class Jogador(
     }
 
     // Controlar as jogadas escolhidas pelo jogador durante a sua vez
-    // TODO verificar se a opção no menu foi escolhida mais de uma vez, a opção pode não aparecer no menu, mas ainda dá pra utilizar
     fun jogar(jogo: Jogo) {
         var fimRodada = false
 
@@ -105,38 +104,70 @@ class Jogador(
 
     // Jogador adiciona um monstro no campo
     fun posicionarMonstro() {
-        //Filtrar cartas de monstro da mão do jogador
-        val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
+        if(monstrosNoCampo.size < 5){
+            //Filtrar cartas de monstro da mão do jogador
+            val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
 
-        if (cartasMonstro.isEmpty()) {
-            println("Você não possui cartas do tipo monstro para posicionar.")
-            return
-        }
+            if (cartasMonstro.isEmpty()) {
+                println("Você não possui cartas do tipo monstro para posicionar.")
+                return
+            }
 
-        // Exibe todas as cartas da mão com índice para seleção
-        println("\nEscolha uma carta para posicionar como monstro:")
-        cartasMonstro.forEachIndexed { index, carta ->
-            println("Opção ${index + 1}: ${carta.nome} - ${carta.tipo} - ${carta.descricao}")
-        }
+            // jogador fica em loop enquanto não escolher um monstro para posicionar
+            val numCartasMao = cartasNaMao.size
+            while (cartasNaMao.size == numCartasMao) {
 
-        // Obtém a escolha do usuário
-        print("\nDigite o número da carta que deseja posicionar: ")
-        val escolha = readlnOrNull()?.toIntOrNull()
+                // Exibe todas as cartas da mão com índice para seleção
+                println("\nEscolha uma carta de monstro para posicionar no tabuleiro:")
+                cartasMonstro.forEachIndexed { index, carta ->
+                    println("Opção ${index + 1}: ${carta.nome} - ${carta.descricao} - A:${carta.ataque}, D:${carta.defesa}")
+                }
 
-        if (escolha != null && escolha in 1..cartasNaMao.size) {
-            val cartaEscolhida = cartasMonstro[escolha - 1]
+                // Obtém a escolha do usuário
+                print("\nDigite o número da carta que deseja posicionar: ")
+                val escolha = readlnOrNull()?.toIntOrNull()
 
-            // Adiciona a carta de monstro no tabuleiro
-            monstrosNoCampo.add(cartaEscolhida)
+                if (escolha != null && escolha in 1..cartasMonstro.size) {
+                    val cartaEscolhida = cartasMonstro[escolha - 1]
 
-            // Marque a carta como posicionada
-            cartaEscolhida.posicionada = true
-            println("Você posicionou ${cartaEscolhida.nome} como monstro.")
+                    // Adiciona a carta de monstro no tabuleiro
+                    monstrosNoCampo.add(cartaEscolhida)
 
-            // Remove a carta da mão
-            cartasNaMao.removeAt((escolha - 1))
-        } else {
-            println("Escolha inválida.")
+                    // Marque a carta como posicionada
+                    cartaEscolhida.posicionada = true
+                    println("Você posicionou ${cartaEscolhida.nome} como monstro.")
+
+                    // Remove a carta da mão
+                    cartasNaMao.remove(cartaEscolhida)
+
+                    var estadoDefinido = false
+                    while (!estadoDefinido) {
+                        print("\nDefina o estado do monstro como atacante ou defensor (A ou D): ")
+                        val estado = readlnOrNull()?.lowercase()
+
+                        when (estado) {
+                            "a" -> {
+                                cartaEscolhida.estado = "Ataque"
+                                estadoDefinido = true
+                                println("${cartaEscolhida.nome} foi posicionado em posição de ataque.")
+                            }
+                            "d" -> {
+                                cartaEscolhida.estado = "Defesa"
+                                estadoDefinido = true
+                                println("${cartaEscolhida.nome} foi posicionado em posição de defesa.")
+                            }
+                            else -> {
+                                println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
+                            }
+                        }
+                    }
+                } else {
+                    println("Escolha inválida.")
+                }
+            }
+
+        } else{
+            println("Número máximo de monstros no campo atingido")
         }
     }
 
