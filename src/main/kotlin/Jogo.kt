@@ -61,7 +61,7 @@ class Jogo(
             }
             "e" -> {
                 println("${jogador.nome} escolheu alterar o estado de um monstro (ataque/defesa).")
-                //atacarOponente()
+                jogador.alterarEstadoMonstro()
             }
             "f" -> {
                 println("${jogador.nome} passou a vez.")

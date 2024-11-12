@@ -164,7 +164,7 @@ class Jogador(
                     while (!estadoDefinido) {
 
                         // Obtém a escolha
-                        print("\nDefina o estado do monstro como atacante ou defensor (A ou D): ")
+                        print("\nDefina o estado do monstro como pocsição de ataque ou defesa (A ou D): ")
                         val estado = readlnOrNull()?.lowercase()
 
                         // Define o estado e sai do loop
@@ -210,6 +210,58 @@ class Jogador(
             }
         } else {
             println("\nO monstro não está em estado de ataque e não pode atacar.")
+        }
+    }
+
+    // Altera o estado de um monstro escolhido
+    fun alterarEstadoMonstro(){
+        if (monstrosNoCampo.isEmpty()) {
+            println("\nNão há monstros no campo para alterar o estado.")
+            return
+        }
+
+        // Exibe monstros no campo com seus respectivos estados
+        println("\nEscolha um monstro para alterar o estado:")
+        monstrosNoCampo.forEachIndexed { index, monstro ->
+            println("Opção ${index + 1}: ${monstro.nome} - Estado atual: ${monstro.estado}")
+        }
+
+        // Loop enquanto jogador não escolher um monstro válido
+        var monstroEscolhido: CartaMonstro? = null
+        while (monstroEscolhido == null) {
+
+            // Obtém a escolha do jogador
+            print("\nDigite o número do monstro que deseja alterar o estado: ")
+            val escolha = readlnOrNull()?.toIntOrNull()
+
+            if (escolha != null && escolha in 1..monstrosNoCampo.size) {
+                monstroEscolhido = monstrosNoCampo[escolha - 1]
+            } else {
+                println("Escolha inválida. Tente novamente.")
+            }
+        }
+
+        // Pergunta o novo do monstro
+        var estadoAlterado = false
+        while (!estadoAlterado) {
+            print("\nDeseja mudar o estado para ataque ou defesa? (A/D): ")
+            val novoEstado = readlnOrNull()?.lowercase()
+
+            when (novoEstado) {
+                "a" -> {
+                    monstroEscolhido.estado = "Ataque"
+                    estadoAlterado = true
+                    println("${monstroEscolhido.nome} agora está em posição de ataque.")
+                }
+                "d" -> {
+                    monstroEscolhido.estado = "Defesa"
+                    estadoAlterado = true
+                    println("${monstroEscolhido.nome} agora está em posição de defesa.")
+                }
+                else -> {
+                    println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
+                }
+            }
         }
     }
 }
