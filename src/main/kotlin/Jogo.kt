@@ -4,16 +4,26 @@ class Jogo(
     private val baralho: Baralho
 ) {
 
-    // Distribui 5 cartas iniciais para cada jogador no começo da partida
-    fun distribuirCartasIniciais() {
-        if (baralho.cartas.size < 10) {
-            println("\nErro: O baralho não tem cartas suficientes para distribuir.")
-            return
-        }
+    // Distribui 5 cartas para um jogador no começo da partida ou quando jogador não tiver mais cartas na mão
+    fun distribuirCartas(jogador: Jogador) {
+        val maxCartasPorJogador = 5
 
-        for (i in 1..5) {
-            jogador1.comprarCarta(baralho.cartas)
-            jogador2.comprarCarta(baralho.cartas)
+        if(jogador.cartasNaMao.isEmpty()){
+
+            if (baralho.cartas.isEmpty()) {
+                println("O baralho está sem cartas para comprar.")
+                return
+            }
+
+            println("Distribuindo 5 cartas para ${jogador.nome}...")
+            for (i in 1..maxCartasPorJogador) {
+                if (baralho.cartas.isNotEmpty()) {
+                    jogador.comprarCarta(baralho.cartas)
+                } else {
+                    println("O baralho ficou sem cartas durante a distribuição para ${jogador.nome}.")
+                    break
+                }
+            }
         }
     }
 

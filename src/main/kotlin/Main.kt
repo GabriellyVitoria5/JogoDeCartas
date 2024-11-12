@@ -25,12 +25,14 @@ fun main() {
     val jogo = Jogo(jogador1, jogador2, baralho)
 
     // Distribui cartas iniciais para cada jogador
-    jogo.distribuirCartasIniciais()
+    println()
+    jogo.distribuirCartas(jogador1)
+    jogo.distribuirCartas(jogador2)
 
     var numTurno = 1 // Controle no número de turnos
 
     // Loop do jogo, onde os jogadores alternam turnos até que um deles perca toda a vida
-    while (jogador1.temVida() && jogador2.temVida()) {
+    while (jogador1.temVida() && jogador2.temVida() && baralho.temCartas()) {
         // Exibe o estado do jogo para ambos os jogadores antes de iniciar o turno
         println("\n---------------------------------------------")
         println("\n${GREEN}Estado do jogo - $numTurno° partida:${RESET}\n")
@@ -45,19 +47,36 @@ fun main() {
 
         println("\n---------------------------------------------${RESET}")
 
-        // Inicia o turno para o jogador 1 - compra uma carta e começa a jogar se jogadores tiverem vida
+        // Inicia o turno para o jogador 1
+        // compra uma carta e começa a jogar se jogadores tiverem vida ou compra 5 cartas se não tiver cartas na mão
         println("\n${RED}Turno de ${jogador1.nome}:${RESET}")
-        jogador1.comprarCarta(baralho.cartas)
+        if (jogador1.cartasNaMao.isNotEmpty()){
+            jogador1.comprarCarta(baralho.cartas)
+        }
+        else{
+            jogo.distribuirCartas(jogador1)
+        }
         jogador1.jogar(jogo)
         if (!jogador2.temVida()) break
 
-        // Inicia o turno para o jogador 2 - compra uma carta e começa a jogar se jogadores tiverem vida
+        // Inicia o turno para o jogador 2
+        // compra uma carta e começa a jogar se jogadores tiverem vida ou compra 5 cartas se não tiver cartas na mão
         println("\n${BLUE}Turno de ${jogador2.nome}:${RESET}")
-        jogador2.comprarCarta(baralho.cartas)
+        if (jogador2.cartasNaMao.isNotEmpty()){
+            jogador2.comprarCarta(baralho.cartas)
+        }
+        else{
+            jogo.distribuirCartas(jogador2)
+        }
         jogador2.jogar(jogo)
         if (!jogador1.temVida()) break
 
         numTurno++
+    }
+
+    // Mensagem de parada do loop do jogo
+    if (baralho.cartas.isEmpty()) {
+        println("O jogo terminou, porque o baralho não tem mais cartas")
     }
 
     // Exibe o resultado do jogo ao final
