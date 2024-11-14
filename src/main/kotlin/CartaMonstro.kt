@@ -1,11 +1,14 @@
+// Classe que representa uma Carta de Monstro, derivada da classe base Carta
 class CartaMonstro(
-    nome: String,
-    descricao: String,
-    ataque: Int,
-    defesa: Int
+    nome: String,            // Nome do monstro
+    descricao: String,       // Descrição do monstro
+    ataque: Int,             // Pontos de ataque do monstro
+    defesa: Int              // Pontos de defesa do monstro
 ) : Carta(nome, descricao, ataque, defesa, "Monstro") {
 
-    var estado: String = "não definido" // Estado será definido ("ataque" ou "defesa") quando o monstro for posicionado
-    var posicionada: Boolean = false // Indica se a carta está em campo
-    
+    // Estado da carta em campo: "ataque" ou "defesa", padrão "não definido" até a posição ser atribuída
+    var estado: String = "não definido"
+
+    // Indica se a carta está posicionada no campo de batalha
+    var posicionada: Boolean = false
 }
