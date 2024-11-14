@@ -45,7 +45,9 @@ class Jogador(
             val cartaDescartada = cartasNaMao.removeAt(escolha - 1)
             println("$nome descartou a carta: ${cartaDescartada.nome}")
         } else {
-            println("Escolha inválida.")
+            // Jogador atual pode tentar descartar de novo se inserir um valor inválido
+            jogadasEscolhidas.remove("c")
+            println("Escolha inválida. Não foi possível descartar, tente novamente.")
         }
 
     }
@@ -127,6 +129,7 @@ class Jogador(
             // Filtrar cartas de monstro da mão do jogador
             val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
 
+            // Jogador perderá a opção 'a' de posicionar um monstro se não tiver cartas de monstro
             if (cartasMonstro.isEmpty()) {
                 println("Você não possui cartas do tipo monstro para posicionar.")
                 return
@@ -204,6 +207,7 @@ class Jogador(
         // Exibe cartas da mão que podem ser usadas como equipamento
         val cartasEquipamento = cartasNaMao.filterIsInstance<CartaEquipamento>()
 
+        // Jogador perderá a opção 'b' de posicionar um monstro se não tiver cartas de monstro
         if (cartasEquipamento.isEmpty()) {
             println("Você não possui cartas de equipamento na mão.")
             return
