@@ -289,28 +289,85 @@ class Jogador(
     }
 
 
-    // Monstros de um jogador realizam ataques contra monstros do oponente
+    // TODO Monstros de um jogador realizam ataques contra monstros do oponente
     fun atacarOponente(oponente: Jogador) {
 
         // Filtra os monstros do jogador atual que está em estado de ataque
-        val qtdmonstrosEmAtaque = monstrosNoCampo.filter { it.estado ==  "Ataque"}
+        val monstrosEmAtaque = monstrosNoCampo.filter { it.estado ==  "Ataque"}
 
         // Jogador atual não perde a chance de atacar se não tiver monstros em ataque
-        if (qtdmonstrosEmAtaque.isEmpty()){
+        if (monstrosEmAtaque.isEmpty()){
             println("$nome não tem monstros em posição de ataque para realizar o ataque! Posicione um monstro em estado de ataque ou troque o estado de um dos seus monstros para ataque e tente novamente")
             jogadasEscolhidas.remove("d")
             return
         }
 
-        println("\n$nome ataca ${oponente.nome}")
+        println("\n$nome ataca ${oponente.nome}\n")
 
         // Jogador pode atacar com todos os monstros em estado de ataque
-        for (monstro in qtdmonstrosEmAtaque) {
+        // TODO: cada monstro só pode atacar uma vez
+        for (monstro in monstrosEmAtaque) {
 
             // Loop de ataque termina quando oponente perde toda a vida
             if(oponente.temVida()){
-                println("monstro atacou")
-                oponente.vida = 0
+
+                // ** Regras de ataque **
+                //
+                // Oponente tem monstros no campo:
+                // - Ataque x Ataque
+                //      .oponente tem menos ataque: monstro do oponente morre e a diferença de pontos de ataque entre eles é retirada da vida do oponente
+                //      .oponente tem mais ataque: monstro do jogador atual perde pontos de ataque com base na diferença de pontos de ataque entre eles
+                //          OBS: se o monstro do jogador chegar em 0 ao atacar um monstro de ataque alto, o monstro morre, mas o jogador atual não perde vida
+                // - Ataque x Defesa
+                //      .oponente tem menos defesa: monstro do oponente morre e a diferença de pontos entre ataque do atacante e defesa do defensor é retirada da vida do oponente
+                //      .oponente tem mais defesa: monstro do jogador atual perde pontos de ataque com base na diferença de pontos do ataque do atacante e defesa do defensor
+                //          OBS: se o monstro do jogador chegar em 0 ao atacar um monstro de defesa alta, o monstro morre, mas o jogador atual não perde vida
+                //
+                // Oponente não tem monstros no campo:
+                // - Ataque direto: oponente perde em vida a quantidade de pontos ataque que o monstro do jogador atual tem
+                //
+                // OBS: monstro morre se seu ataque ou defesa chegar a 0
+
+                // Jogador atual escolhe um de seus monstros para atacar
+                for ((index, monstro) in monstrosEmAtaque.withIndex()) {
+                    println("Opção ${index + 1}: ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa}")
+                }
+
+                // Loop para garantir que o jogador escolha um monstro válido
+                var monstroAtacanteEscolhido: CartaMonstro? = null
+                while (monstroAtacanteEscolhido == null) {
+
+                    // Obtém a escolha do jogador
+                    print("\nDigite o número do monstro que deseja atacar: ")
+                    val escolha = readlnOrNull()?.toIntOrNull()
+
+                    if (escolha != null && escolha in 1..monstrosEmAtaque.size) {
+                        monstroAtacanteEscolhido = monstrosEmAtaque[escolha - 1]
+                    } else {
+                        println("Escolha inválida. Tente novamente.")
+                    }
+                }
+
+
+                // Verifica se oponente tem monstros no campo
+                if (oponente.monstrosNoCampo.isNotEmpty()) {
+                    println("${oponente.nome} tem os seguintes monstros no campo:")
+
+                    // TODO: Atacar com base nas regras acima
+                    // ...
+
+
+                } else {
+
+                    // Jogador atual realizar um ataque direto ao oponente
+                    println("${monstroAtacanteEscolhido.nome} realiza um ataque direto com ${monstroAtacanteEscolhido.ataque} pontos de ataque!")
+                    oponente.vida -= monstroAtacanteEscolhido.ataque
+                    println("${oponente.nome} perde ${monstroAtacanteEscolhido.ataque} pontos de vida.")
+                }
+
+
+                //println("monstro atacou")
+
             }
             else{
                 println("${oponente.nome} perdeu todos os pontos de vida! Partida encerrada.")
