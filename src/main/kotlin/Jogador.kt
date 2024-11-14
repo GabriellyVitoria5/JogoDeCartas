@@ -255,7 +255,7 @@ class Jogador(
         // Pergunta ao jogador se deseja aplicar o bônus no ataque ou na defesa
         var escolhaAtributo: String? = null
         while (escolhaAtributo == null) {
-            println("Escolha o atributo do monstro a ser aumentado pelo equipamento (1 para Ataque e 2 para Defesa):")
+            print("Escolha o atributo do monstro a ser aumentado pelo equipamento (1 para Ataque e 2 para Defesa):")
 
             val escolha = readlnOrNull()?.toIntOrNull()
             when (escolha) {
@@ -279,22 +279,23 @@ class Jogador(
     }
 
 
-    // Realiza um ataque contra o monstro de um jogador oponente
-    fun atacar(monstroAtacante: CartaMonstro, oponente: Jogador, monstroDefensor: Carta) {
-        if (monstroAtacante.estado == "ataque") {
-            // Verifica se o ataque é maior que a defesa do monstro defensor
-            if (monstroAtacante.ataque > monstroDefensor.defesa) {
-                val dano = monstroAtacante.ataque - monstroDefensor.defesa
-                oponente.vida -= dano
-                println("$nome ataca ${oponente.nome} e causa $dano de dano!")
-            } else {
-                // Caso contrário, o jogador atacante recebe o dano
-                val dano = monstroDefensor.defesa - monstroAtacante.ataque
-                vida -= dano
-                println("\n${oponente.nome} se defende e causa $dano de dano ao atacante!")
-            }
-        } else {
-            println("\nO monstro não está em estado de ataque e não pode atacar.")
+    // Monstros de um jogador realizam ataques contra monstros do oponente
+    fun atacarOponente(oponente: Jogador) {
+
+        // Filtra os monstros do jogador atual que está em estado de ataque
+        val qtdmonstrosEmAtaque = monstrosNoCampo.filter { it.estado ==  "Ataque"}
+
+        // Jogador atual não perde a chance de atacar se não tiver monstros em ataque
+        if (qtdmonstrosEmAtaque.isEmpty()){
+            println("$nome não tem monstros em posição de ataque para realizar o ataque! Posicione um monstro em estado de ataque ou troque o estado de um dos seus monstros para ataque e tente novamente")
+            jogadasEscolhidas.remove("d")
+            return
+        }
+
+        println("\n$nome ataca ${oponente.nome}")
+
+        for (monstro in qtdmonstrosEmAtaque) {
+            println("monstro atacou")
         }
     }
 

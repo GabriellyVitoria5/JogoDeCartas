@@ -4,6 +4,8 @@ class Jogo(
     private val baralho: Baralho
 ) {
 
+    var vezJogador = true // controle sobre qual jogador irá jogar: true - jogador 1, false - jogador 2
+
     // Distribui 5 cartas para um jogador no começo da partida ou quando jogador não tiver mais cartas na mão
     fun distribuirCartas(jogador: Jogador) {
         val maxCartasPorJogador = 5
@@ -57,7 +59,14 @@ class Jogo(
             }
             "d" -> {
                 println("${jogador.nome} escolheu realizar um ataque contra o oponente.")
-                //atacarOponente()
+                //jogador atual precisa passar como parâmetro o oponente que deseja atacar
+                if (vezJogador){
+                    jogador.atacarOponente(jogador2) // jogador 1 ataca jogador 2
+                }
+                else{
+                    jogador.atacarOponente(jogador1) // jogador 2 ataca jogador 1
+                }
+
             }
             "e" -> {
                 println("${jogador.nome} escolheu alterar o estado de um monstro (ataque/defesa).")
@@ -94,17 +103,6 @@ class Jogo(
             println(carta)
         }
         println("---------------------------------------------")
-    }
-
-    // Executa um turno no jogo, onde o jogador 1 ataca o jogador 2
-    fun turno() {
-        if (jogador1.monstrosNoCampo.isNotEmpty() && jogador2.monstrosNoCampo.isNotEmpty()) {
-            val monstroAtacante = jogador1.monstrosNoCampo[0]
-            val monstroDefensor = jogador2.monstrosNoCampo[0]
-            jogador1.atacar(monstroAtacante, jogador2, monstroDefensor) // Jogador 1 ataca Jogador 2
-        } else {
-            println("\nUm dos jogadores não possui monstros no campo para atacar.")
-        }
     }
 
     // Calcular o vencedor do jogo pela quantidade de vida dos jogadores

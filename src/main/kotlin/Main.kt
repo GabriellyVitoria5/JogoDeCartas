@@ -50,6 +50,7 @@ fun main() {
         // Inicia o turno para o jogador 1
         // compra uma carta e começa a jogar se jogadores tiverem vida ou compra 5 cartas se não tiver cartas na mão
         println("\n${RED}Turno de ${jogador1.nome}:${RESET}")
+        jogo.vezJogador = true
         if (jogador1.cartasNaMao.isNotEmpty()){
             jogador1.comprarCarta(baralho.cartas)
         }
@@ -62,6 +63,7 @@ fun main() {
         // Inicia o turno para o jogador 2
         // compra uma carta e começa a jogar se jogadores tiverem vida ou compra 5 cartas se não tiver cartas na mão
         println("\n${BLUE}Turno de ${jogador2.nome}:${RESET}")
+        jogo.vezJogador = false
         if (jogador2.cartasNaMao.isNotEmpty()){
             jogador2.comprarCarta(baralho.cartas)
         }
