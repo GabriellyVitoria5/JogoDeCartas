@@ -62,6 +62,12 @@ class Jogador(
         var fimRodada = false
 
         do {
+
+            // Verificar se amboa os jogadores tem vida para continuar usando o menu de opções
+            if (!jogo.jogadoresTemVida()){
+                return
+            }
+
             // Imprime as cartas da mão do jogador no começo de cada rodada
             jogo.mostrarMao(this)
 
@@ -298,8 +304,19 @@ class Jogador(
 
         println("\n$nome ataca ${oponente.nome}")
 
+        // Jogador pode atacar com todos os monstros em estado de ataque
         for (monstro in qtdmonstrosEmAtaque) {
-            println("monstro atacou")
+
+            // Loop de ataque termina quando oponente perde toda a vida
+            if(oponente.temVida()){
+                println("monstro atacou")
+                oponente.vida = 0
+            }
+            else{
+                println("${oponente.nome} perdeu todos os pontos de vida! Partida encerrada.")
+                return
+            }
+
         }
     }
 

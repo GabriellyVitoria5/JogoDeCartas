@@ -79,6 +79,11 @@ class Jogo(
         }
     }
 
+    // Verificar se os dois jodares tem vida para continuar a jogar
+    fun jogadoresTemVida(): Boolean{
+        return (jogador1.temVida() && jogador2.temVida())
+    }
+
     // Controlar o fluxo do jogo
     fun iniciarJogo() {
         while (baralho.temCartas() && (jogador1.temVida() && jogador2.temVida())) {
