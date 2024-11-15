@@ -58,38 +58,23 @@ class Jogador(
         var fimRodada = false
 
         do {
+            // Menu para de ser mostrado se um jogador estiver sem vida
+            if (!jogo.jogadoresTemVida()) return
 
-            // Verificar se ambos os jogadores têm vida para usar o menu de opções
-            if (!jogo.jogadoresTemVida()){
-                return
-            }
-
-            // Mostrar na tela as cartas do jogador, monstros no tabuleiro e menu de opções
+            // Exibir cartas, monstros no tabuleiro e menu de opções
             jogo.mostrarMao(this)
             mostrarMonstroTabuleiro()
             jogo.imprimirMenuDinamico(this)
 
-            // Solicita a escolha do jogador
             print("\n$nome, digite a opção desejada: ")
             val op = readlnOrNull() ?: ""
 
-            if (op in jogadasEscolhidas) {
-                println("Você já escolheu essa opção. Por favor, escolha outra.")
-            } else{
-                // Guardar a jogada escolhida
-                jogadasEscolhidas.add(op)
+            // Jogo processa a jogada e verifica automaticamente se foi repetida ou inválida
+            jogo.processarJogadas(this, op)
 
-                // Verifica se o jogador já realizou um ataque e tenta mudar o estado do monstro
-                if ("d" in jogadasEscolhidas && op == "e") {
-                    println("Não é possível alterar o estado do monstro após atacar.")
-                } else {
-                    jogo.processarJogadas(this, op)
-                }
-
-                // Verificar se a rodada terminou
-                if (op == "f") {
-                    fimRodada = true
-                }
+            // Verificar se a rodada terminou
+            if (op == "f") {
+                fimRodada = true
             }
 
             println("\n----------------------------------------------------------------------")

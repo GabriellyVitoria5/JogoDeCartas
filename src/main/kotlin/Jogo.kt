@@ -7,7 +7,7 @@ class Jogo(
     // Controle sobre qual jogador irá jogar: true - jogador 1, false - jogador 2
     var vezJogador = true
 
-    // Função para distribuir 5 cartas para um jogador, no início ou quando ele ficar sem cartas
+    // Função para distribuir 5 cartas para um jogador no início ou quando ele ficar sem cartas
     fun distribuirCartas(jogador: Jogador) {
         val maxCartasPorJogador = 5
 
@@ -34,7 +34,7 @@ class Jogo(
         }
     }
 
-    // Função para imprimir o menu dinâmico com as jogadas disponíveis para o jogador
+    // Imprimir o menu dinâmico com as jogadas disponíveis para o jogador
     fun imprimirMenuDinamico(jogador: Jogador) {
         println("\n~ Menu de jogadas ~")
         println("\nEscolha uma ou mais ações, ou digite 'f' para finalizar a rodada:")
@@ -48,39 +48,53 @@ class Jogo(
         println("f) Passar a vez")
     }
 
-    // Função que processa a jogada escolhida pelo jogador
-    // Cada opção chama um método correspondente da classe Jogador
+    // Cada opção chama uma função correspondente da classe Jogador com base na jogada escolhida
     fun processarJogadas(jogador: Jogador, op: String) {
+
+        // Verificar se a jogada já foi realizada
+        if (op in jogador.jogadasEscolhidas) {
+            println("Você já escolheu essa opção nesta rodada. Por favor, escolha outra.")
+            return
+        }
+
         when (op.lowercase()) {
             "a" -> {
                 println("${jogador.nome} escolheu posicionar um novo monstro no tabuleiro.")
-                jogador.posicionarMonstro() // Chama o método de posicionar monstro
+                jogador.posicionarMonstro()
+                jogador.jogadasEscolhidas.add(op)
             }
             "b" -> {
                 println("${jogador.nome} escolheu equipar um monstro com uma carta de equipamento.")
-                jogador.equiparMonstro() // Chama o método de equipar monstro
+                jogador.equiparMonstro()
             }
             "c" -> {
                 println("${jogador.nome} escolheu descartar uma carta da mão.")
-                jogador.descartar() // Chama o método de descartar carta
+                jogador.descartar()
+                jogador.jogadasEscolhidas.add(op)
             }
             "d" -> {
                 println("${jogador.nome} escolheu realizar um ataque contra o oponente.")
-                // Se for o jogador 1, ataca o jogador 2, e vice-versa
                 if (vezJogador) {
                     jogador.atacarOponente(jogador2) // Jogador 1 ataca jogador 2
                 } else {
                     jogador.atacarOponente(jogador1) // Jogador 2 ataca jogador 1
                 }
+                jogador.jogadasEscolhidas.add(op)
             }
             "e" -> {
+                // Validar se monstro já atacou nesta rodada
+                if ("d" in jogador.jogadasEscolhidas) {
+                    println("Não é possível alterar o estado do monstro após o ataque, tente novamente na próxima partida.")
+                    return
+                }
                 println("${jogador.nome} escolheu alterar o estado de um monstro (ataque/defesa).")
-                jogador.alterarEstadoMonstro() // Altera o estado do monstro
+                jogador.alterarEstadoMonstro()
+                jogador.jogadasEscolhidas.add(op)
             }
             "f" -> {
                 println("${jogador.nome} passou a vez.")
             }
-            else -> println("Opção inválida! Por favor, escolha uma opção válida.") // Caso a opção seja inválida
+            else -> println("Opção inválida! Por favor, escolha uma opção válida.")
         }
     }
 
