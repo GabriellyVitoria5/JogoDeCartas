@@ -20,7 +20,7 @@ class Jogo(
                 return
             }
 
-            println("Distribuindo 5 cartas para ${jogador.nome}...")
+            println("\nDistribuindo 5 cartas para ${jogador.nome}...")
 
             // Distribui as cartas ao jogador
             for (i in 1..maxCartasPorJogador) {

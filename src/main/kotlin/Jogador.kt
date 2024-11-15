@@ -6,50 +6,46 @@ class Jogador(
     var vida: Int = 10000
     val jogadasEscolhidas: MutableList<String> = mutableListOf()
 
-    // Aducionar uma carta na mão do jogador, caso haja espaço
+    // Ajudar na validação de escolhas de cartas, dá um índice para cada item da lista e retorna o índice do item escolhido
+    private fun escolherCarta(opcoes: List<String>, prompt: String): Int {
+        println("\nCartas disponíveis:")
+        opcoes.forEachIndexed { index, carta -> println("Opção ${index + 1}: $carta") }
+        print("\n$prompt")
+        val escolha = readlnOrNull()?.toIntOrNull()
+        return escolha?.takeIf { it in 1..opcoes.size }?.minus(1) ?: -1
+    }
+
+    // Comprar uma carta do baralho caso haja espaço
     fun comprarCarta(baralho: MutableList<Carta>) {
-        if(baralho.isNotEmpty()){
-            if (cartasNaMao.size < 10) {
-                cartasNaMao.add(baralho.removeAt(0))
-            } else {
-                // Não sai do loop até descartar para jogador não ter mais que 10 cartas na mão
-                while (cartasNaMao.size == 10) {
-                    println("\n$nome atingiu o limite de 10 cartas na mão. Descarte uma carta antes de receber outra.")
-                    descartar()
-                }
-                cartasNaMao.add(baralho.removeAt(0))
+        if (baralho.isNotEmpty()) {
+            while (cartasNaMao.size  == 10) {
+                println("\n$nome atingiu o limite de 10 cartas. Descarte uma carta.")
+                descartar()
             }
+            cartasNaMao.add(baralho.removeAt(0))
         } else{
             println("\nBaralho não possui mais cartas para comprar.")
         }
     }
 
     // Remover uma carta escolhida da mão do jogador
-    fun descartar(){
-        if (cartasNaMao.size == 0) {
+    fun descartar() {
+        if (cartasNaMao.isEmpty()) {
             println("\n$nome não tem cartas na mão para descartar.")
             return
         }
 
-        println("\nEscolha uma carta para descartar:")
-        cartasNaMao.forEachIndexed { index, carta ->
-            println("Opção ${index + 1}: $carta")
-        }
-
-        // Jogador escolhe uma carta para descartar
-        print("\nDigite o número da carta que deseja descartar: ")
-        val escolha = readlnOrNull()?.toIntOrNull()
+        val escolha = escolherCarta(cartasNaMao.map { it.toString()}, "Escolha uma das cartas para descartar: ")
 
         // Retirar carta da não
-        if (escolha != null && escolha in 1..cartasNaMao.size) {
-            val cartaDescartada = cartasNaMao.removeAt(escolha - 1)
-            println("$nome descartou a carta: ${cartaDescartada.nome}")
+        if (escolha != -1) {
+            val cartaDescartada = cartasNaMao.removeAt(escolha)
+            println("$nome descartou: ${cartaDescartada.nome}")
         } else {
-            // Jogador atual pode tentar descartar de novo se inserir um valor inválido
+            // Jogador pode tentar descartar de novo se inserir um valor inválido
             jogadasEscolhidas.remove("c")
             println("Escolha inválida. Não foi possível descartar, tente novamente.")
         }
-
     }
 
     // Verificar se o jogador ainda possui pontos de vida
@@ -63,18 +59,14 @@ class Jogador(
 
         do {
 
-            // Verificar se amboa os jogadores tem vida para continuar usando o menu de opções
+            // Verificar se ambos os jogadores têm vida para usar o menu de opções
             if (!jogo.jogadoresTemVida()){
                 return
             }
 
-            // Imprime as cartas da mão do jogador no começo de cada rodada
+            // Mostrar na tela as cartas do jogador, monstros no tabuleiro e menu de opções
             jogo.mostrarMao(this)
-
-            // Imprime monstros posicionados no tabuleiro do jogador
             mostrarMonstroTabuleiro()
-
-            // Exibe o menu de jogadas
             jogo.imprimirMenuDinamico(this)
 
             // Solicita a escolha do jogador
@@ -83,7 +75,6 @@ class Jogador(
 
             if (op in jogadasEscolhidas) {
                 println("Você já escolheu essa opção. Por favor, escolha outra.")
-
             } else{
                 // Guardar a jogada escolhida
                 jogadasEscolhidas.add(op)
@@ -108,7 +99,7 @@ class Jogador(
         limparJogadas() // Limpar as jogadas após a rodada terminar
     }
 
-    // Limpa as jogadas para a próxima rodada
+    // Limpa as jogadas escolhidas para a próxima rodada
     private fun limparJogadas() {
         jogadasEscolhidas.clear()
     }
@@ -161,8 +152,6 @@ class Jogador(
                     // Adiciona a carta de monstro no tabuleiro
                     monstrosNoCampo.add(cartaEscolhida)
 
-                    // Marque a carta como posicionada
-                    cartaEscolhida.posicionada = true
                     println("Você posicionou ${cartaEscolhida.nome} como monstro.")
 
                     // Remove a carta da mão
@@ -289,7 +278,7 @@ class Jogador(
     }
 
 
-    // TODO Monstros de um jogador realizam ataques contra monstros do oponente
+    // Monstros de um jogador realizam ataques contra monstros do oponente
     fun atacarOponente(oponente: Jogador) {
 
         // Filtra os monstros do jogador atual que está em estado de ataque

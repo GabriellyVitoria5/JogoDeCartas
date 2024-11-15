@@ -82,6 +82,8 @@ fun main() {
 
         // Incrementa o número do turno após ambos os jogadores jogarem
         numTurno++
+
+        jogador1.cartasNaMao.clear()
     }
 
     // Verifica o motivo pelo qual o jogo terminou (baralho vazio ou jogador sem vida)
