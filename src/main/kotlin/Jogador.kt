@@ -119,74 +119,47 @@ class Jogador(
 
     // Jogador adiciona um monstro no campo e define o seu estado (ataque ou defesa)
     fun posicionarMonstro() {
-        if(monstrosNoCampo.size < 5){
-            // Filtrar cartas de monstro da mão do jogador
-            val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
-
-            // Jogador perderá a opção 'a' de posicionar um monstro se não tiver cartas de monstro
-            if (cartasMonstro.isEmpty()) {
-                println("Você não possui cartas do tipo monstro para posicionar.")
-                return
-            }
-
-            // Loop enquanto jogador não escolher um monstro para posicionar
-            val numCartasMao = cartasNaMao.size
-            while (cartasNaMao.size == numCartasMao) {
-
-                // Exibe todas as cartas da mão com índice para seleção
-                println("\nEscolha uma carta de monstro para posicionar no tabuleiro:")
-                cartasMonstro.forEachIndexed { index, carta ->
-                    println("Opção ${index + 1}: ${carta.nome} - ${carta.descricao} - A:${carta.ataque}, D:${carta.defesa}")
-                }
-
-                // Obtém a escolha do jogador
-                print("\nDigite o número da carta que deseja posicionar: ")
-                val escolha = readlnOrNull()?.toIntOrNull()
-
-                if (escolha != null && escolha in 1..cartasMonstro.size) {
-                    val cartaEscolhida = cartasMonstro[escolha - 1]
-
-                    // Adiciona a carta de monstro no tabuleiro
-                    monstrosNoCampo.add(cartaEscolhida)
-
-                    println("Você posicionou ${cartaEscolhida.nome} como monstro.")
-
-                    // Remove a carta da mão
-                    cartasNaMao.remove(cartaEscolhida)
-
-                    // Loop enquanto jogador não escolher o estado do monstro
-                    var estadoDefinido = false
-                    while (!estadoDefinido) {
-
-                        // Obtém a escolha
-                        print("\nDefina o estado do monstro como pocsição de ataque ou defesa (A ou D): ")
-                        val estado = readlnOrNull()?.lowercase()
-
-                        // Define o estado e sai do loop
-                        when (estado) {
-                            "a" -> {
-                                cartaEscolhida.estado = "Ataque"
-                                estadoDefinido = true
-                                println("${cartaEscolhida.nome} foi posicionado em posição de ataque.")
-                            }
-                            "d" -> {
-                                cartaEscolhida.estado = "Defesa"
-                                estadoDefinido = true
-                                println("${cartaEscolhida.nome} foi posicionado em posição de defesa.")
-                            }
-                            else -> {
-                                println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
-                            }
-                        }
-                    }
-                } else {
-                    println("Escolha inválida.")
-                }
-            }
-
-        } else{
-            println("Número máximo de monstros no campo atingido")
+        if (monstrosNoCampo.size >= 5) {
+            println("Número máximo de monstros no campo atingido.")
+            return
         }
+
+        // Filtrar cartas de monstro da mão do jogador
+        val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
+
+        if (cartasMonstro.isEmpty()) {
+            println("Você não possui cartas do tipo monstro para posicionar.")
+            return
+        }
+
+        // Jogador é obrigado a escolher um monstro válido
+        var escolha = -1
+        while (escolha == -1) {
+            escolha = escolherCarta(cartasMonstro.map { it.toString()}, "Escolha uma carta de monstro para posicionar no tabuleiro: ")
+        }
+
+        // Adicionar monstro nno campo e remover carta da mão
+        val monstroEscolhido = cartasMonstro[escolha]
+        monstrosNoCampo.add(monstroEscolhido)
+        cartasNaMao.remove(monstroEscolhido)
+
+        // Jogador é obrigado a escolher um estado válido
+        while (true) {
+            print("\nDefina o estado do monstro como posição de ataque ou defesa (A ou D): ")
+            when (readlnOrNull()?.lowercase()) {
+                "a" -> {
+                    monstroEscolhido.estado = "Ataque"
+                    break
+                }
+                "d" -> {
+                    monstroEscolhido.estado = "Defesa"
+                    break
+                }
+                else -> println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
+            }
+        }
+
+        println("${monstroEscolhido.nome} foi posicionado em estado de ${monstroEscolhido.estado}.")
     }
 
     // Mudar atributos de ataque ou defesa de um monstro usando os valores de um equipamento
