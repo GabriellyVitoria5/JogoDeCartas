@@ -127,6 +127,7 @@ class Jogador(
         // Filtrar cartas de monstro da mão do jogador
         val cartasMonstro = cartasNaMao.filterIsInstance<CartaMonstro>()
 
+        // Jogador perderá a opção 'a' de posicionar um monstro se não tiver cartas de monstro
         if (cartasMonstro.isEmpty()) {
             println("Você não possui cartas do tipo monstro para posicionar.")
             return
@@ -169,7 +170,7 @@ class Jogador(
             return
         }
 
-        // Exibe cartas da mão que podem ser usadas como equipamento
+        // Filtrar cartas de equipamento da mão do jogador
         val cartasEquipamento = cartasNaMao.filterIsInstance<CartaEquipamento>()
 
         // Jogador perderá a opção 'b' de posicionar um monstro se não tiver cartas de monstro
@@ -178,73 +179,40 @@ class Jogador(
             return
         }
 
-        // Exibe monstros no campo para o jogador escolher
-        println("\nEscolha um monstro para equipar:")
-        monstrosNoCampo.forEachIndexed { index, monstro ->
-            println("Opção ${index + 1}: ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa}")
+        // Jogador é obrigado a escolher um monstro válido
+        var escolhaMonstro = -1
+        while (escolhaMonstro == -1) {
+            escolhaMonstro = escolherCarta(monstrosNoCampo.map { "${it.nome} - A:${it.ataque}, D:${it.defesa}"}, "Escolha um monstro para equipar: ")
         }
+        val monstroEscolhido = monstrosNoCampo[escolhaMonstro]
 
-        // Jogador escolhe um monstro para equipar
-        // Loop enquanto jogador não escolher um monstro válido
-        var monstroEscolhido: CartaMonstro? = null
-        while (monstroEscolhido == null) {
-
-            // Obtém a escolha do jogador
-            print("\nDigite o número do monstro que deseja alterar o estado: ")
-            val escolha = readlnOrNull()?.toIntOrNull()
-
-            if (escolha != null && escolha in 1..monstrosNoCampo.size) {
-                monstroEscolhido = monstrosNoCampo[escolha - 1]
-            } else {
-                println("Escolha inválida. Tente novamente.")
-            }
+        // Jogador é obrigado a escolher um equipamento válido
+        var escolhaEquipamento = -1
+        while (escolhaEquipamento == -1) {
+            escolhaEquipamento = escolherCarta(cartasEquipamento.map { "${it.nome} - ${it.descricao} - A: ${it.ataque}, D: ${it.defesa}"}, "Escolha uma carta de equipamento para usar em ${monstroEscolhido.nome}: ")
         }
+        val equipamentoEscolhido = cartasEquipamento[escolhaEquipamento]
 
-        // Exibe cartas de equipamento disponíveis para usar
-        println("\nEscolha uma carta de equipamento para usar:")
-        cartasEquipamento.forEachIndexed { index, equipamento ->
-            println("Opção ${index + 1}: ${equipamento.nome} - ${equipamento.descricao} - A: ${equipamento.ataque}, D: ${equipamento.defesa})")
-        }
-
-        // Loop enquanto o jogador não escolher uma carta de equipamento válido
-        var equipamentoEscolhido: CartaEquipamento? = null
-        while (equipamentoEscolhido == null) {
-
-            // Obtém a escolha do jogador
-            print("\nDigite o número da carta de equipamento que deseja usar: ")
-            val escolhaEquipamento = readlnOrNull()?.toIntOrNull()
-
-            if (escolhaEquipamento != null && escolhaEquipamento in 1..cartasEquipamento.size) {
-                equipamentoEscolhido = cartasEquipamento[escolhaEquipamento - 1]
-            } else {
-                println("Escolha inválida. Tente novamente.")
-            }
-        }
-
-        // Pergunta ao jogador se deseja aplicar o bônus no ataque ou na defesa
-        var escolhaAtributo: String? = null
-        while (escolhaAtributo == null) {
-            print("Escolha o atributo do monstro a ser aumentado pelo equipamento (1 para Ataque e 2 para Defesa): ")
-
-            val escolha = readlnOrNull()?.toIntOrNull()
-            when (escolha) {
-                1 -> {
+        // Jogador pe obridado a escolher um atributo válido a ser aumentado (ataque ou defesa)
+        while (true) {
+            print("Escolha o atributo do monstro a ser aumentado pelo equipamento (A - Ataque, D - Defesa): ")
+            when (readlnOrNull()?.lowercase()) {
+                "a" -> {
                     monstroEscolhido.ataque += equipamentoEscolhido.ataque
-                    println("${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.ataque} de ataque")
-                    escolhaAtributo = "Ataque"
+                    println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.ataque} de ataque.")
+                    break
                 }
-                2 -> {
+                "b" -> {
                     monstroEscolhido.defesa += equipamentoEscolhido.defesa
-                    println("${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa")
-                    escolhaAtributo = "Defesa"
+                    println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa.")
+                    break
                 }
-                else -> println("Escolha inválida. Tente novamente.")
+                else -> println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
             }
         }
 
         // Remove o equipamento da mão do jogador
         cartasNaMao.remove(equipamentoEscolhido)
-
     }
 
 
