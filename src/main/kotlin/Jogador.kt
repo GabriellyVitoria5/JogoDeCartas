@@ -62,7 +62,7 @@ class Jogador(
             if (!jogo.jogadoresTemVida()) return
 
             // Exibir cartas, monstros no tabuleiro e menu de opções
-            jogo.mostrarMao(this)
+            mostrarMao()
             mostrarMonstroTabuleiro()
             jogo.imprimirMenuDinamico(this)
 
@@ -89,19 +89,31 @@ class Jogador(
         jogadasEscolhidas.clear()
     }
 
+    // Função para mostrar as cartas na mão de um jogador
+    fun mostrarMao() {
+        println("\n$nome tem as seguintes cartas na mão:")
+        if (cartasNaMao.isEmpty()) {
+            println("Nenhuma carta na mão")
+            return
+        }
+        println("\nTipo | Nome | Descrição | Ataque | Defesa | Estado do monstro")
+        for (carta in cartasNaMao) {
+            println(carta)
+        }
+        println("---------------------------------------------")
+    }
+
     // Exibe monstros posicionados no tabuleiro de um jogador
     fun mostrarMonstroTabuleiro(){
         println("\nMonstros no tabuleiro de $nome")
-
         if(monstrosNoCampo.isEmpty()){
             println("Nenhum monstro posicionado")
             return
         }
-
         println("\nNome | Ataque | Defesa | Estado do monstro")
-        for (monstro in monstrosNoCampo) {
-            println("[ ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa} - ${monstro.estado} ]")
-        }
+        monstrosNoCampo.joinToString("\n") { monstro ->
+            "[ ${monstro.nome.padEnd(21)} | A:${monstro.ataque.toString().padEnd(6)} | D:${monstro.defesa.toString().padEnd(6)} | ${monstro.estado} ]"
+        }.also(::println)
         println("---------------------------------------------")
     }
 
@@ -239,7 +251,7 @@ class Jogador(
         // Pergunta ao jogador se deseja aplicar o bônus no ataque ou na defesa
         var escolhaAtributo: String? = null
         while (escolhaAtributo == null) {
-            print("Escolha o atributo do monstro a ser aumentado pelo equipamento (1 para Ataque e 2 para Defesa):")
+            print("Escolha o atributo do monstro a ser aumentado pelo equipamento (1 para Ataque e 2 para Defesa): ")
 
             val escolha = readlnOrNull()?.toIntOrNull()
             when (escolha) {

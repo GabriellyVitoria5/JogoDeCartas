@@ -8,11 +8,11 @@ open class Carta(
 ) {
     /**
      * Representação personalizada de uma carta em forma de string.
-     * Exemplo de saída: "- monstro Dragão: Carta poderosa - A:3000, D:2500"
+     * Exemplo de saída: "- Monstro Dragão: Um dragão imponente!       ; A:3000 D:2500"
      *
      * @return String representando os detalhes da carta.
      */
     override fun toString(): String {
-        return "- $tipo $nome: $descricao - A:$ataque, D:$defesa"
+        return "- ${tipo.padEnd(6)} ${nome.padEnd(12)}: ${descricao.padEnd(25)} - A:${ataque.toString().padEnd(4)} D:${defesa.toString().padEnd(4)}"
     }
 }

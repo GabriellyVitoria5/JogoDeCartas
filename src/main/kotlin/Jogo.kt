@@ -120,18 +120,6 @@ class Jogo(
         }
     }
 
-    // Função para mostrar as cartas na mão de um jogador
-    fun mostrarMao(jogador: Jogador) {
-        println("\n${jogador.nome} tem as seguintes cartas na mão:")
-        println("\nTipo | Nome | Descrição | Ataque | Defesa | Estado do monstro")
-
-        // Imprime cada carta que o jogador tem em sua mão
-        for (carta in jogador.cartasNaMao) {
-            println(carta)
-        }
-        println("---------------------------------------------")
-    }
-
     // Função para calcular o vencedor do jogo baseado na vida dos jogadores
     fun calcularVencedor() {
         val vencedor: (Jogador, Jogador) -> String = { jogador1, jogador2 ->

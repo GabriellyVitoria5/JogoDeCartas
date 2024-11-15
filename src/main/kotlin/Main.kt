@@ -42,12 +42,12 @@ fun main() {
 
         // Exibe informações sobre o jogador 1: nome, vida, cartas e monstros no tabuleiro
         println("${jogador1.nome} - Vida: ${jogador1.vida}")
-        jogo.mostrarMao(jogador1)
+        jogador1.mostrarMao()
         jogador1.mostrarMonstroTabuleiro()
 
         // Exibe informações sobre o jogador 2: nome, vida, cartas e monstros no tabuleiro
         println("\n${jogador2.nome} - Vida: ${jogador2.vida}")
-        jogo.mostrarMao(jogador2)
+        jogador2.mostrarMao()
         jogador2.mostrarMonstroTabuleiro()
 
         println("\n---------------------------------------------${RESET}")
