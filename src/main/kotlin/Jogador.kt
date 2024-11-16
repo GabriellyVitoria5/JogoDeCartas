@@ -2,7 +2,7 @@ class Jogador(
     val nome: String,
 ) {
     val cartasNaMao: MutableList<Carta> = mutableListOf()
-    val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()
+    private val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()
     var vida: Int = 10000
     val jogadasEscolhidas: MutableList<String> = mutableListOf()
 
@@ -216,225 +216,108 @@ class Jogador(
     }
 
 
-    // Monstros de um jogador realizam ataques contra monstros do oponente
+    // Sugestão para otimização do atacarOponente --------------------------------------------------------------------------------
     fun atacarOponente(oponente: Jogador) {
-
-        // Filtra os monstros do jogador atual que está em estado de ataque
+        // Filtra os monstros do jogador atual que estão em posição de ataque
         val monstrosEmAtaque = monstrosNoCampo.filter { it.estado == "Ataque" }.toMutableList()
 
-        // Jogador atual não perde a chance de atacar se não tiver monstros em ataque
-        if (monstrosEmAtaque.isEmpty()){
-            println("$nome não tem monstros em posição de ataque para realizar o ataque! Posicione um monstro em estado de ataque ou troque o estado de um dos seus monstros para ataque e tente novamente")
-            jogadasEscolhidas.remove("d")
+        // Se não houver monstros em posição de ataque, a jogada é invalidada
+        if (monstrosEmAtaque.isEmpty()) {
+            println("$nome não tem monstros em posição de ataque para realizar o ataque!")
+            jogadasEscolhidas.remove("d") // Remove a opção de ataque da lista de jogadas disponíveis
             return
         }
 
-        // Jogador pode atacar com todos os monstros em estado de ataque
-        while(monstrosEmAtaque.isNotEmpty()){
+        // Loop enquanto houver monstros em ataque e o oponente ainda tiver pontos de vida
+        while (monstrosEmAtaque.isNotEmpty() && oponente.temVida()) {
+            // Escolhe um monstro atacante
+            val atacante = escolherMonstro(monstrosEmAtaque, "Escolha um monstro para atacar:")
 
-            // Loop de ataque termina quando oponente perde toda a vida
-            if(oponente.temVida()){
+            // Determina o alvo: se o oponente tiver monstros, escolhe um deles; caso contrário, será ataque direto
+            val alvo = if (oponente.monstrosNoCampo.isNotEmpty()) {
+                escolherMonstro(oponente.monstrosNoCampo, "Escolha um monstro do oponente para atacar:")
+            } else null
 
-                // ** Regras de ataque **
-                //
-                // Oponente tem monstros no campo:
-                // - Ataque x Ataque
-                //      .oponente tem menos ataque: monstro do oponente morre e a diferença de pontos de ataque entre eles é retirada da vida do oponente
-                //      .oponente tem mais ataque: monstro do jogador atual perde pontos de ataque com base na diferença de pontos de ataque entre eles
-                //      .oponente tem ataque igual: valor da defesa irá desempatar, o monstro com menos defesa perderá 10% dos seus pontos de ataque, mas se defesa também for igual, nada acontece
-                //          OBS: se o monstro do jogador chegar em 0 de ataque ao atacar um monstro de ataque alto, o monstro morre, mas o jogador atual não perde vida
-                // - Ataque x Defesa
-                //      .oponente tem menos defesa que o ataque do atacante: monstro do oponente morre e a diferença de pontos entre ataque do atacante e defesa do defensor é retirada da vida do oponente
-                //      .oponente tem mais defesa que o ataque do atacante: monstro do jogador atual perde pontos de ataque com base na diferença de pontos do ataque do atacante e defesa do defensor
-                //      .oponente tem defesa igual ao ataque do atacante: monstro atacante perde 10% de pontos de ataque, e monstro defensor perde 10% de pontos de defesa
-                //          OBS: se o monstro do jogador chegar em 0 de ataque ao atacar um monstro de defesa alta, o monstro morre, mas o jogador atual não perde vida
-                //
-                // Oponente não tem monstros no campo:
-                // - Ataque direto: oponente perde em vida a quantidade de pontos ataque que o monstro do jogador atual tem
-                //
-                // OBS: monstro morre se seu ataque ou defesa chegar a 0
+            if (alvo != null) {
+                // Processa o ataque contra um monstro adversário
+                processarAtaque(atacante, alvo, oponente)
 
-                // Jogador atual escolhe um dos seus monstros para atacar
-                println("\nEscolha um monstro para atacar o oponente:")
-                for ((index, monstro) in monstrosEmAtaque.withIndex()) {
-                    println("Opção ${index + 1}: ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa}")
+                // Remove o alvo se ele for destruído
+                if (alvo.ataque <= 0 || alvo.defesa <= 0) {
+                    oponente.monstrosNoCampo.remove(alvo)
+                    println("${alvo.nome} foi destruído e removido do campo de ${oponente.nome}.")
                 }
-
-                // Garantir que o jogador escolha um monstro válido
-                var monstroAtacanteEscolhido: CartaMonstro? = null
-                while (monstroAtacanteEscolhido == null) {
-
-                    print("\nDigite o número do monstro que deseja usar para atacar: ")
-                    val escolha = readlnOrNull()?.toIntOrNull()
-
-                    if (escolha != null && escolha in 1..monstrosEmAtaque.size) {
-                        monstroAtacanteEscolhido = monstrosEmAtaque[escolha - 1]
-                    } else {
-                        println("Escolha inválida. Tente novamente.")
-                    }
-                }
-
-                // Escolher um dos monstros do oponente para atacar se ele tiver monstros no campo
-                if (oponente.monstrosNoCampo.isNotEmpty()) {
-
-                    // Mostra os monstros em campo do oponente
-                    println("\n${oponente.nome} tem os seguintes monstros no campo:")
-                    for ((index, monstroOponente) in oponente.monstrosNoCampo.withIndex()) {
-                        println("Opção ${index + 1}: ${monstroOponente.nome} - A: ${monstroOponente.ataque}, D: ${monstroOponente.defesa}, Estado: ${monstroOponente.estado})")
-                    }
-
-                    // Escolher do oponente para receber o ataque
-                    var monstroOponente: CartaMonstro? = null
-                    while (monstroOponente == null) {
-                        print("\nEscolha o número do monstro do oponente para atacar: ")
-                        val escolhaMonstroOponente = readlnOrNull()?.toIntOrNull()
-
-                        if (escolhaMonstroOponente != null && escolhaMonstroOponente in 1..oponente.monstrosNoCampo.size) {
-                            monstroOponente = oponente.monstrosNoCampo[escolhaMonstroOponente - 1]
-                        } else {
-                            println("Escolha inválida! Por favor, escolha um número válido.")
-                        }
-                    }
-
-                    // Implementando as regras do ataque
-                    print("\n${monstroAtacanteEscolhido.nome} ataca ${monstroOponente.nome}!!")
-
-                    // Ataque X Ataque
-                    if(monstroOponente.estado == "Ataque"){
-
-                        // Monstro do jogador atual derrota monstro do oponente
-                        if (monstroAtacanteEscolhido.ataque > monstroOponente.ataque) {
-                            val diferenca = monstroAtacanteEscolhido.ataque - monstroOponente.ataque
-                            oponente.monstrosNoCampo.remove(monstroOponente)
-                            oponente.vida -= diferenca
-                            println("\nO ataque foi um sucesso! ${monstroOponente.nome} foi destruído! ${oponente.nome} perde $diferenca pontos de vida durante o ataque.")
-                        } else if (monstroAtacanteEscolhido.ataque < monstroOponente.ataque) {
-
-                            // Monstro do jogador atual perde pontos de ataque
-                            val diferenca = monstroOponente.ataque - monstroAtacanteEscolhido.ataque
-                            monstroAtacanteEscolhido.ataque -= diferenca
-                            println("\nO ataque falhou, pois seu monstro não é forte o suficiente para superar o ataque de ${monstroOponente.nome}. Seu monstro perde $diferenca pontos de ataque ao receber um golpe de ${monstroOponente.nome}!")
-                        } else {
-
-                            // Defesa irá desemparar ou a luta não resultará em nada
-                            val ataquePerdidoCalculado = (monstroOponente.ataque * 0.1).toInt()
-                            if (monstroAtacanteEscolhido.defesa > monstroOponente.defesa) {
-                                monstroOponente.ataque -= ataquePerdidoCalculado
-                                println("\nOs dois monstros são igualmente fortes! Mas seu monstro ${monstroAtacanteEscolhido.nome} tinha mais defesa para resistir a luta e consegue tirar $ataquePerdidoCalculado pontos de ataque de ataque")
-                            } else if(monstroAtacanteEscolhido.defesa < monstroOponente.defesa) {
-                                monstroAtacanteEscolhido.ataque -= ataquePerdidoCalculado
-                                println("\nOs dois monstros são igualmente fortes! Mas ${monstroOponente.nome} tinha mais defesa para resistir ao ataque e conseguiu tirar $ataquePerdidoCalculado pontos de ataque do seu monstro ${monstroAtacanteEscolhido.nome}!")
-                            }
-                            else{
-                                println("\nOs dois monstros são igualmente fortes! Suas defesas também são as mesmas! O ataque não surtiu efeito em nenhum dos lados.")
-                            }
-                        }
-
-                    }
-                    // Ataque X Defesa
-                    else if (monstroOponente.estado == "Defesa") {
-
-                        // Monstro do jogador atual derrota monstro do oponente
-                        if (monstroAtacanteEscolhido.ataque > monstroOponente.defesa) {
-                            val diferenca = monstroAtacanteEscolhido.ataque - monstroOponente.defesa
-                            oponente.monstrosNoCampo.remove(monstroOponente)
-                            oponente.vida -= diferenca
-                            println("\n O ataque de ${monstroOponente.nome} superou as defesas do monstro, e ${monstroOponente.nome} foi destruído! Oponente perde $diferenca pontos de vida durante o ataque.")
-                        } else if (monstroAtacanteEscolhido.ataque < monstroOponente.defesa) {
-
-                            // Monstro do jogador atual perde pontos de ataque
-                            val diferenca = monstroOponente.defesa - monstroAtacanteEscolhido.ataque
-                            monstroAtacanteEscolhido.ataque -= diferenca
-                            println("\nSeu monstro ${monstroAtacanteEscolhido.nome} não é forte o suficiente para superar as defesas de ${monstroOponente.nome} e perde $diferenca pontos de ataque durante a luta!")
-                        } else {
-                            // Monstro do jogador atual perde 10% pontos de ataque, e monstro do oponente perde 10% pontos de defesa
-                            val ataquePerdidoCalculado = (monstroAtacanteEscolhido.ataque * 0.1).toInt()
-                            val defesaPerdidaCalculada = (monstroOponente.defesa * 0.1).toInt()
-                            monstroAtacanteEscolhido.ataque -= ataquePerdidoCalculado
-                            monstroOponente.defesa -= defesaPerdidaCalculada
-                            println("\nO ataque do seu monstro ${monstroAtacanteEscolhido.nome} é igual à defesa de ${monstroOponente.nome}! Durante a luta, seu monstro perde $ataquePerdidoCalculado pontos de ataque, e monstro do oponente perde pontos de defesa!")
-                        }
-                    }
-
-                    // Verificar se algum monstro perdeu todos os pontos de ataque ou defesa para retirar do campo
-                    if (monstroAtacanteEscolhido.ataque <= 0 || monstroAtacanteEscolhido.defesa <= 0){
-                        println("\nSeu monstro sofreu graves ferimentos durante a luta e não conseguiu sobreviver. ${monstroAtacanteEscolhido.nome} será removido do campo.")
-                        monstrosNoCampo.remove(monstroAtacanteEscolhido)
-                    }
-                    if (monstroOponente.ataque <= 0 || monstroOponente.defesa <= 0){
-                        println("\nO monstro sofreu graves ferimentos durante a luta e não conseguiu sobreviver. ${monstroOponente.nome} será removido do campo.")
-                    }
-
-                } else {
-
-                    // Jogador atual realizar um ataque direto ao oponente
-                    println("${monstroAtacanteEscolhido.nome} realiza um ataque direto com ${monstroAtacanteEscolhido.ataque} pontos de ataque!")
-                    oponente.vida -= monstroAtacanteEscolhido.ataque
-                    println("${oponente.nome} perde ${monstroAtacanteEscolhido.ataque} pontos de vida.")
-                }
-
-
-                // Remove o monstro da lista para o jogador não poder atacar com ele novamente
-                monstrosEmAtaque.remove(monstroAtacanteEscolhido)
-
-            }
-            else{
-                println("${oponente.nome} perdeu todos os pontos de vida! Partida encerrada.")
-                return
+            } else {
+                // Realiza ataque direto caso não haja monstros para defender
+                oponente.vida -= atacante.ataque
+                println("${atacante.nome} realizou um ataque direto! ${oponente.nome} perde ${atacante.ataque} pontos de vida.")
             }
 
+            // Remove o atacante se ele for destruído
+            if (atacante.ataque <= 0 || atacante.defesa <= 0) monstrosNoCampo.remove(atacante)
+            monstrosEmAtaque.remove(atacante) // Atualiza a lista de monstros disponíveis para atacar
         }
+
+        // Verifica se o oponente perdeu todos os pontos de vida
+        if (!oponente.temVida()) println("${oponente.nome} perdeu todos os pontos de vida! Partida encerrada.")
     }
 
-    // Altera o estado de um monstro escolhido
-    fun alterarEstadoMonstro(){
+    private fun escolherMonstro(lista: List<CartaMonstro>, mensagem: String): CartaMonstro {
+        // Exibe a lista de opções de monstros para o jogador
+        println(mensagem)
+        lista.forEachIndexed { index, monstro ->
+            println("Opção ${index + 1}: ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa} Estado: ${monstro.estado}")
+        }
+
+        // Lê e valida a escolha do jogador
+        var escolha: Int
+        do {
+            print("Digite o número do monstro: ")
+            escolha = readlnOrNull()?.toIntOrNull() ?: -1
+        } while (escolha !in 1..lista.size)
+        return lista[escolha - 1] // Retorna o monstro escolhido
+    }
+
+    private fun processarAtaque(atacante: CartaMonstro, alvo: CartaMonstro, oponente: Jogador) {
+        // Calcula a diferença de ataque entre o atacante e o alvo (considerando o estado do alvo)
+        val diferenca = atacante.ataque - (if (alvo.estado == "Defesa") alvo.defesa else alvo.ataque)
+
+        // Aplica as regras de combate com base na diferença de valores
+        when {
+            diferenca > 0 -> {
+                // O atacante vence, causando dano ao oponente
+                println("${atacante.nome} destrói ${alvo.nome}! ${oponente.nome} perde $diferenca pontos de vida.")
+                oponente.vida -= diferenca
+            }
+
+            diferenca < 0 -> {
+                // O atacante perde o combate e seu ataque é reduzido
+                atacante.ataque += diferenca // Subtrai o valor absoluto da diferença
+                println("${atacante.nome} não foi forte o suficiente e perdeu ${-diferenca} pontos de ataque.")
+            }
+
+            else -> {
+                // Empate: ambos perdem 10% de seus atributos principais
+                atacante.ataque = (atacante.ataque * 0.9).toInt()
+                alvo.defesa = (alvo.defesa * 0.9).toInt()
+                println("${atacante.nome} e ${alvo.nome} empatam! Ambos perdem 10% de ataque e defesa, respectivamente.")
+            }
+        }
+    }
+// --------------------------------------------------------------------------------------------------------------------
+
+    // Sugestão para otimizar o alterarEstadoMonstro -----------------------------------------------------------------------
+    fun alterarEstadoMonstro() {
+        // Verifica se há monstros no campo para alterar estado
         if (monstrosNoCampo.isEmpty()) {
             println("\nNão há monstros no campo para alterar o estado.")
             return
         }
 
-        // Exibe monstros no campo com seus respectivos estados
-        println("\nEscolha um monstro para alterar o estado:")
-        monstrosNoCampo.forEachIndexed { index, monstro ->
-            println("Opção ${index + 1}: ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa} Estado atual: - ${monstro.estado}")
-        }
-
-        // Loop enquanto jogador não escolher um monstro válido
-        var monstroEscolhido: CartaMonstro? = null
-        while (monstroEscolhido == null) {
-
-            // Obtém a escolha do jogador
-            print("\nDigite o número do monstro que deseja alterar o estado: ")
-            val escolha = readlnOrNull()?.toIntOrNull()
-
-            if (escolha != null && escolha in 1..monstrosNoCampo.size) {
-                monstroEscolhido = monstrosNoCampo[escolha - 1]
-            } else {
-                println("Escolha inválida. Tente novamente.")
-            }
-        }
-
-        // Pergunta o novo estado do monstro
-        var estadoAlterado = false
-        while (!estadoAlterado) {
-            print("\nDeseja mudar o estado para ataque ou defesa? (A/D): ")
-            val novoEstado = readlnOrNull()?.lowercase()
-
-            when (novoEstado) {
-                "a" -> {
-                    monstroEscolhido.estado = "Ataque"
-                    estadoAlterado = true
-                    println("${monstroEscolhido.nome} agora está em posição de ataque.")
-                }
-                "d" -> {
-                    monstroEscolhido.estado = "Defesa"
-                    estadoAlterado = true
-                    println("${monstroEscolhido.nome} agora está em posição de defesa.")
-                }
-                else -> {
-                    println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
-                }
-            }
-        }
+        // Permite ao jogador escolher um monstro e alternar seu estado (Ataque <-> Defesa)
+        val monstro = escolherMonstro(monstrosNoCampo, "Escolha um monstro para alterar o estado:")
+        monstro.estado = if (monstro.estado == "Ataque") "Defesa" else "Ataque"
+        println("${monstro.nome} agora está em posição de ${monstro.estado}.")
     }
+// --------------------------------------------------------------------------------------------------------------------
 }
