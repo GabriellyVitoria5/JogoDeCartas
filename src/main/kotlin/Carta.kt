@@ -1,5 +1,5 @@
 /**
- * Classe base que representa uma Carta genérica.
+ * Classe abstrata base que representa uma Carta genérica.
  *
  * @property nome Nome da carta.
  * @property descricao Descrição da carta.
@@ -7,7 +7,7 @@
  * @property defesa Pontos de defesa da carta.
  * @property tipo Tipo da carta (ex.: monstro, equipamento).
  */
-open class Carta(
+abstract class Carta(
     val nome: String,
     val descricao: String,
     var ataque: Int,
@@ -16,11 +16,7 @@ open class Carta(
 ) {
     /**
      * Gera uma representação em texto formatada da carta.
-     *
-     * Exemplo de saída:
-     * ```
-     * - Monstro Dragão: Um dragão imponente - A:3000 D:2500
-     * ```
+     * Exemplo de saída: - Monstro Dragão: Um dragão imponente - A:3000 D:2500
      *
      * @return Uma string contendo os detalhes da carta.
      */

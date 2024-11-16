@@ -1,6 +1,5 @@
 /**
  * Classe que representa uma Carta de Equipamento.
- *
  * Herda as propriedades e comportamentos da classe base [Carta].
  *
  * @param nome Nome do equipamento.
