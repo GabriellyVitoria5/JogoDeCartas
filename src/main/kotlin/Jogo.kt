@@ -6,6 +6,7 @@ class Jogo(
 
     // Controle sobre qual jogador irá jogar: true - jogador 1, false - jogador 2
     var vezJogador = true
+    var rodada = 1 // Variável para rastrear a rodada atual
 
     // Função para distribuir 5 cartas para um jogador no início ou quando ele ficar sem cartas
     fun distribuirCartas(jogador: Jogador) {
@@ -73,6 +74,12 @@ class Jogo(
                 jogador.jogadasEscolhidas.add(op)
             }
             "d" -> {
+                // Restrição de ataques na primeira rodada
+                if (rodada == 1) {
+                    println("Ataques só são permitidos a partir da segunda rodada.")
+                    return
+                }
+
                 println("${jogador.nome} escolheu realizar um ataque contra o oponente.")
                 if (vezJogador) {
                     jogador.atacarOponente(jogador2) // Jogador 1 ataca jogador 2
@@ -98,6 +105,11 @@ class Jogo(
         }
     }
 
+    // Atualizar o número da rodada ao final do turno de cada jogador
+    fun atualizarRodada() {
+        rodada++
+    }
+
     // Função para verificar se os dois jogadores têm vida para continuar o jogo
     fun jogadoresTemVida(): Boolean {
         return (jogador1.temVida() && jogador2.temVida()) // Retorna verdadeiro se ambos tiverem vida
@@ -116,7 +128,7 @@ class Jogo(
             println("\nRodada de ${jogador2.nome}:")
             jogador2.jogar(this) // Jogador 2 faz sua jogada
 
-            jogador2.vida = 0 // TODO: Este é apenas um controle temporário para terminar o loop (remover depois)
+            atualizarRodada() // Atualiza a rodada após o turno de ambos os jogadores
         }
     }
 
