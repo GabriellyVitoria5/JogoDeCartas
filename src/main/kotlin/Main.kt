@@ -1,8 +1,8 @@
 // Códigos ANSI para adicionar cores no menu
 const val RESET = "\u001B[0m"
-const val RED = "\u001B[31m" // Cor para jogador 1
-const val BLUE = "\u001B[34m" // Cor para jogador 2
-const val GREEN = "\u001B[32m" // Cor para destacar informações gerais
+const val RED = "\u001B[31m"    // Cor para jogador 1
+const val BLUE = "\u001B[34m"   // Cor para jogador 2
+const val GREEN = "\u001B[32m"  // Cor para destacar informações gerais
 
 fun main() {
     // Cria uma instância de baralho e carrega as cartas a partir de um arquivo CSV
@@ -11,7 +11,7 @@ fun main() {
     // Carrega as cartas do arquivo CSV e verifica se o baralho foi carregado corretamente
     baralho.carregarCartasDoArquivo("src/main/kotlin/resources/cartas.csv")
 
-    // Se o baralho estiver vazio, exibe erro e termina a execução
+    // Verifica se o baralho está vazio, exibe erro e termina a execução caso necessário
     if (baralho.cartas.isEmpty()) {
         println("\nErro: O baralho está vazio. Verifique o arquivo CSV.")
         return
@@ -49,9 +49,12 @@ fun main() {
 
         // Incrementa o número do turno após ambos os jogadores jogarem
         numTurno++
+
+        // Atualiza a rodada do jogo
         jogo.atualizarRodada()
 
-        jogador1.cartasNaMao.clear()  // Limpa a mão do jogador 1 ao final do turno
+        // Limpa a mão do jogador 1 ao final do turno
+        jogador1.cartasNaMao.clear()
     }
 
     // Verifica o motivo pelo qual o jogo terminou (baralho vazio ou jogador sem vida)
@@ -83,12 +86,20 @@ fun exibirEstadoJogo(jogador1: Jogador, jogador2: Jogador, numTurno: Int) {
 
 // Função para controlar o turno de um jogador
 fun turnoJogador(jogo: Jogo, jogador: Jogador, baralho: Baralho, cor: String) {
+    // Exibe o turno do jogador atual com a cor especificada
     println("\n$cor Turno de ${jogador.nome}:${RESET}")
-    jogo.vezJogador = jogador == jogo.jogador1  // Define se é a vez do jogador 1 ou 2
+
+    // Define se é a vez do jogador 1 ou 2
+    jogo.vezJogador = jogador == jogo.jogador1
+
+    // Se o jogador tiver cartas na mão, ele compra uma carta
     if (jogador.cartasNaMao.isNotEmpty()) {
-        jogador.comprarCarta(baralho.cartas)  // Compra uma carta se houver cartas
+        jogador.comprarCarta(baralho.cartas)
     } else {
-        jogo.distribuirCartas(jogador)  // Distribui 5 novas cartas se não tiver cartas
+        // Caso contrário, distribui 5 novas cartas
+        jogo.distribuirCartas(jogador)
     }
-    jogador.jogar(jogo)  // Jogador realiza sua jogada
+
+    // O jogador realiza sua jogada
+    jogador.jogar(jogo)
 }
