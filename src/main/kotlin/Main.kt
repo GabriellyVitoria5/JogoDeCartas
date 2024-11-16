@@ -36,55 +36,22 @@ fun main() {
 
     // Loop do jogo, onde os jogadores alternam turnos até que um deles perca toda a vida
     while (jogador1.temVida() && jogador2.temVida() && baralho.temCartas()) {
-        // Exibe o estado do jogo para ambos os jogadores antes de iniciar o turno
-        println("\n---------------------------------------------")
-        println("\n${GREEN}Estado do jogo - $numTurno° partida:${RESET}\n")
+        // Exibe o estado do jogo antes de iniciar o turno
+        exibirEstadoJogo(jogador1, jogador2, numTurno)
 
-        // Exibe informações sobre o jogador 1: nome, vida, cartas e monstros no tabuleiro
-        println("${jogador1.nome} - Vida: ${jogador1.vida}")
-        jogador1.mostrarMao()
-        jogador1.mostrarMonstroTabuleiro()
+        // Turno do Jogador 1
+        turnoJogador(jogo, jogador1, baralho, RED)
+        if (!jogador2.temVida()) break  // Verifica se o jogador 2 perdeu
 
-        // Exibe informações sobre o jogador 2: nome, vida, cartas e monstros no tabuleiro
-        println("\n${jogador2.nome} - Vida: ${jogador2.vida}")
-        jogador2.mostrarMao()
-        jogador2.mostrarMonstroTabuleiro()
-
-        println("\n---------------------------------------------${RESET}")
-
-        // Inicia o turno do jogador 1
-        // Se o jogador tiver cartas, ele compra uma; se não tiver, distribui 5 novas cartas
-        println("\n${RED}Turno de ${jogador1.nome}:${RESET}")
-        jogo.vezJogador = true
-        if (jogador1.cartasNaMao.isNotEmpty()) {
-            jogador1.comprarCarta(baralho.cartas) // Compra uma carta se houver cartas
-        } else {
-            jogo.distribuirCartas(jogador1) // Distribui 5 novas cartas se não tiver cartas
-        }
-        jogador1.jogar(jogo) // Jogador 1 realiza sua jogada
-
-        // Se o jogador 2 perder toda a vida, o jogo termina
-        if (!jogador2.temVida()) break
-
-        // Inicia o turno do jogador 2
-        // Se o jogador tiver cartas, ele compra uma; se não, distribui 5 novas cartas
-        println("\n${BLUE}Turno de ${jogador2.nome}:${RESET}")
-        jogo.vezJogador = false
-        if (jogador2.cartasNaMao.isNotEmpty()) {
-            jogador2.comprarCarta(baralho.cartas) // Compra uma carta se houver cartas
-        } else {
-            jogo.distribuirCartas(jogador2) // Distribui 5 novas cartas se não tiver cartas
-        }
-        jogador2.jogar(jogo) // Jogador 2 realiza sua jogada
-
-        // Se o jogador 1 perder toda a vida, o jogo termina
-        if (!jogador1.temVida()) break
+        // Turno do Jogador 2
+        turnoJogador(jogo, jogador2, baralho, BLUE)
+        if (!jogador1.temVida()) break  // Verifica se o jogador 1 perdeu
 
         // Incrementa o número do turno após ambos os jogadores jogarem
         numTurno++
         jogo.atualizarRodada()
 
-        jogador1.cartasNaMao.clear()
+        jogador1.cartasNaMao.clear()  // Limpa a mão do jogador 1 ao final do turno
     }
 
     // Verifica o motivo pelo qual o jogo terminou (baralho vazio ou jogador sem vida)
@@ -94,4 +61,34 @@ fun main() {
 
     // Exibe o resultado final do jogo (vencedor ou empate)
     jogo.calcularVencedor()
+}
+
+// Função para exibir o estado do jogo
+fun exibirEstadoJogo(jogador1: Jogador, jogador2: Jogador, numTurno: Int) {
+    println("\n---------------------------------------------")
+    println("\n${GREEN}Estado do jogo - $numTurno° partida:${RESET}\n")
+
+    // Exibe informações sobre o jogador 1
+    println("${jogador1.nome} - Vida: ${jogador1.vida}")
+    jogador1.mostrarMao()
+    jogador1.mostrarMonstroTabuleiro()
+
+    // Exibe informações sobre o jogador 2
+    println("\n${jogador2.nome} - Vida: ${jogador2.vida}")
+    jogador2.mostrarMao()
+    jogador2.mostrarMonstroTabuleiro()
+
+    println("\n---------------------------------------------${RESET}")
+}
+
+// Função para controlar o turno de um jogador
+fun turnoJogador(jogo: Jogo, jogador: Jogador, baralho: Baralho, cor: String) {
+    println("\n$cor Turno de ${jogador.nome}:${RESET}")
+    jogo.vezJogador = jogador == jogo.jogador1  // Define se é a vez do jogador 1 ou 2
+    if (jogador.cartasNaMao.isNotEmpty()) {
+        jogador.comprarCarta(baralho.cartas)  // Compra uma carta se houver cartas
+    } else {
+        jogo.distribuirCartas(jogador)  // Distribui 5 novas cartas se não tiver cartas
+    }
+    jogador.jogar(jogo)  // Jogador realiza sua jogada
 }

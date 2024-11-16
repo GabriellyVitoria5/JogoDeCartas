@@ -1,5 +1,5 @@
 class Jogo(
-    private val jogador1: Jogador,
+    val jogador1: Jogador,
     private val jogador2: Jogador,
     private val baralho: Baralho
 ) {
