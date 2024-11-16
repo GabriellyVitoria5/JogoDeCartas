@@ -2,13 +2,9 @@ import java.io.File
 import java.io.IOException
 
 /**
- * Classe que representa um Baralho de cartas, responsável por gerenciar
- * as operações de carregamento, validação e manipulação de cartas.
+ * Classe que representa um Baralho de cartas, responsável por gerenciar as operações de carregamento, validação e manipulação de cartas.
  */
 class Baralho {
-    /**
-     * Lista de cartas que compõem o baralho.
-     */
     val cartas: MutableList<Carta> = mutableListOf()
 
     /**
@@ -26,21 +22,20 @@ class Baralho {
                 // Lê e retorna as linhas do arquivo
                 arquivo.bufferedReader().readLines()
             } catch (e: IOException) {
-                println("\nErro na leitura do arquivo.")
+                println("\n${RED}Erro na leitura do arquivo.${RESET}")
                 null
             } catch (e: NullPointerException) {
-                println("\nErro: Arquivo nulo.")
+                println("\n${RED}Erro: Arquivo nulo.${RESET}")
                 null
             }
         } else {
-            println("\nArquivo não encontrado no caminho especificado: $caminhoArquivo")
+            println("\n${RED}Arquivo não encontrado no caminho especificado: $caminhoArquivo${RESET}")
         }
         return null
     }
 
     /**
-     * Carrega as cartas a partir de um arquivo CSV, realiza a validação dos dados
-     * e armazena as cartas válidas na lista de cartas.
+     * Carrega as cartas a partir de um arquivo CSV, realiza a validação dos dados e armazena as cartas válidas na lista de cartas.
      *
      * Cada linha do arquivo deve conter:
      * - Nome da carta
@@ -81,25 +76,21 @@ class Baralho {
                             "monstro" -> CartaMonstro(nome, descricao, ataque, defesa)
                             "equipamento" -> CartaEquipamento(nome, descricao, ataque, defesa)
                             else -> {
-                                println("\nErro: Tipo de carta inválido na linha: $linha")
                                 null
                             }
                         }
                     } else {
-                        // Caso algum campo obrigatório esteja vazio ou inválido
-                        println("\nErro: Linha ignorada devido a campos inválidos ou vazios: $linha")
-                        null
+                        null // Caso algum campo obrigatório esteja vazio ou inválido
                     }
                 } else {
-                    println("\nErro: Linha inválida no arquivo CSV (não possui o número correto de colunas): $linha")
                     null // Retorna null para linhas inválidas
                 }
             })
 
-            // Log final com resumo das validações
+            // Resumo das validações
             println("\nTotal de linhas processadas: $totalLinhas")
-            println("Total de cartas válidas: $linhasValidas")
-            println("Total de linhas inválidas: ${totalLinhas - linhasValidas}")
+            println("${GREEN}Total de cartas válidas: $linhasValidas${RESET}")
+            println("${YELLOW}Total de linhas inválidas: ${totalLinhas - linhasValidas}${RESET}")
         } else {
             println("\nErro: Nenhuma linha encontrada no arquivo ou arquivo vazio.")
         }
@@ -110,6 +101,7 @@ class Baralho {
      */
     fun embaralhar() {
         cartas.shuffle()
+        println("\nAs cartas foram embaralhadas.")
     }
 
     /**
