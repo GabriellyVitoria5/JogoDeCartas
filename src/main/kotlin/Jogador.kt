@@ -265,7 +265,7 @@ class Jogador(
                     break
                 }
 
-                "b" -> {
+                "d" -> {
                     monstroEscolhido.defesa += equipamentoEscolhido.defesa
                     println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa.")
                     break
