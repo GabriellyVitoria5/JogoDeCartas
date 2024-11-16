@@ -82,6 +82,7 @@ fun main() {
 
         // Incrementa o número do turno após ambos os jogadores jogarem
         numTurno++
+        jogo.atualizarRodada()
 
         jogador1.cartasNaMao.clear()
     }
