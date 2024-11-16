@@ -1,16 +1,28 @@
-// Classe base para representar uma Carta genérica
+/**
+ * Classe base que representa uma Carta genérica.
+ *
+ * @property nome Nome da carta.
+ * @property descricao Descrição da carta.
+ * @property ataque Pontos de ataque da carta.
+ * @property defesa Pontos de defesa da carta.
+ * @property tipo Tipo da carta (ex.: monstro, equipamento).
+ */
 open class Carta(
-    val nome: String,         // Nome da carta
-    val descricao: String,    // Descrição da carta
-    var ataque: Int,          // Pontos de ataque da carta
-    var defesa: Int,          // Pontos de defesa da carta
-    private val tipo: String  // Tipo da carta (ex.: monstro, equipamento)
+    val nome: String,
+    val descricao: String,
+    var ataque: Int,
+    var defesa: Int,
+    private val tipo: String
 ) {
     /**
-     * Representação personalizada de uma carta em forma de string.
-     * Exemplo de saída: "- Monstro Dragão: Um dragão imponente!       ; A:3000 D:2500"
+     * Gera uma representação em texto formatada da carta.
      *
-     * @return String representando os detalhes da carta.
+     * Exemplo de saída:
+     * ```
+     * - Monstro Dragão: Um dragão imponente - A:3000 D:2500
+     * ```
+     *
+     * @return Uma string contendo os detalhes da carta.
      */
     override fun toString(): String {
         return "- ${tipo.padEnd(6)} ${nome.padEnd(12)}: ${descricao.padEnd(25)} - A:${ataque.toString().padEnd(4)} D:${defesa.toString().padEnd(4)}"
