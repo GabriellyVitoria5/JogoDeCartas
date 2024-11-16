@@ -1,26 +1,19 @@
 /**
  * Representa um jogador no jogo, com informações sobre suas cartas, monstros e pontos de vida.
- * O jogador pode comprar, descartar e jogar cartas, além de ter suas jogadas registradas.
+ * O jogador pode comprar, descartar e jogar cartas, além de ter suas jogadas registradas em cada rodada.
  *
  * @param nome O nome do jogador.
  */
 class Jogador(
-    val nome: String,  // Nome do jogador
+    val nome: String,
 ) {
-    // Lista de cartas na mão do jogador
     val cartasNaMao: MutableList<Carta> = mutableListOf()
-
-    // Lista de monstros posicionados no campo de batalha do jogador
     private val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()
-
-    // Pontos de vida do jogador, inicialmente definidos como 10000
     var vida: Int = 10000
-
-    // Lista de jogadas que o jogador escolheu durante sua vez
     val jogadasEscolhidas: MutableList<String> = mutableListOf()
 
     /**
-     * Função responsável por apresentar as opções de cartas disponíveis e capturar a escolha do jogador.
+     * Apresentar as opções de cartas disponíveis e capturar a escolha do jogador.
      * Retorna o índice da carta escolhida ou -1 se a escolha for inválida.
      *
      * @param opcoes Lista de strings representando as opções de cartas.
@@ -36,7 +29,7 @@ class Jogador(
     }
 
     /**
-     * Função que permite ao jogador comprar uma carta do baralho, caso haja espaço.
+     * Permite ao jogador comprar uma carta do baralho, caso haja espaço.
      * Se o jogador já possui 10 cartas, será solicitado que ele descarte uma carta primeiro.
      *
      * @param baralho O baralho de cartas do qual o jogador vai comprar.
@@ -45,11 +38,11 @@ class Jogador(
         if (baralho.isNotEmpty()) {
             while (cartasNaMao.size == 10) {
                 println("\n$nome atingiu o limite de 10 cartas. Descarte uma carta.")
-                descartar()  // Verifica se o jogador tem 10 cartas e realiza o descarte, se necessário.
+                descartar()
             }
-            cartasNaMao.add(baralho.removeAt(0))  // Adiciona uma carta do baralho à mão do jogador
+            cartasNaMao.add(baralho.removeAt(0))
         } else {
-            println("\nBaralho não possui mais cartas para comprar.")  // Mensagem quando o baralho está vazio
+            println("\nBaralho não possui mais cartas para comprar.")
         }
     }
 
@@ -59,18 +52,20 @@ class Jogador(
      */
     fun descartar() {
         if (cartasNaMao.isEmpty()) {
-            println("\n$nome não tem cartas na mão para descartar.")  // Caso o jogador não tenha cartas
+            println("\n$nome não tem cartas na mão para descartar.")
             return
         }
 
         val escolha = escolherCarta(cartasNaMao.map { it.toString() }, "Escolha uma das cartas para descartar: ")
 
+        // Remove a carta escolhida da mão do jogador
         if (escolha != -1) {
-            val cartaDescartada = cartasNaMao.removeAt(escolha)  // Remove a carta escolhida da mão do jogador
-            println("$nome descartou: ${cartaDescartada.nome}")  // Exibe a carta descartada
+            val cartaDescartada = cartasNaMao.removeAt(escolha)
+            println("$nome descartou: ${cartaDescartada.nome}")
         } else {
-            jogadasEscolhidas.remove("c")  // Remove a jogada inválida
-            println("Escolha inválida. Não foi possível descartar, tente novamente.")  // Mensagem de erro
+            // Jogador pode tentar descartar de novo nessa rodada se inserir um valor inválido
+            jogadasEscolhidas.remove("c")
+            println("Escolha inválida. Não foi possível descartar, tente novamente.")
         }
     }
 
@@ -80,13 +75,13 @@ class Jogador(
      * @return Retorna `true` se o jogador ainda tem vida, `false` caso contrário.
      */
     fun temVida(): Boolean {
-        return vida > 0  // Retorna true se a vida for maior que zero
+        return vida > 0
     }
 
     /**
      * Controla as jogadas escolhidas pelo jogador durante sua vez no jogo.
      * O jogador pode escolher realizar ações como atacar, comprar cartas, descartar, etc.
-     * O loop continua até que o jogador finalize a rodada.
+     * O loop continua até que o jogador finalize a rodada usando a opção de passar a vez.
      *
      * @param jogo Instância do jogo, que controla o andamento da partida.
      */
@@ -107,7 +102,7 @@ class Jogador(
             // Processa a jogada escolhida pelo jogador e verifica se foi válida ou repetida
             jogo.processarJogadas(this, op)
 
-            // Se a opção for "f", encerra a rodada
+            // Eencerra a rodada
             if (op == "f") {
                 fimRodada = true
             }
@@ -123,11 +118,11 @@ class Jogador(
      * Limpa as jogadas escolhidas pelo jogador após o término da rodada.
      */
     private fun limparJogadas() {
-        jogadasEscolhidas.clear()  // Limpa a lista de jogadas feitas
+        jogadasEscolhidas.clear()
     }
 
     /**
-     * Exibe as cartas que o jogador tem em sua mão, com detalhes como nome, tipo e estatísticas.
+     * Exibe as cartas que o jogador tem na mão, com detalhes como nome, tipo e estatísticas.
      */
     fun mostrarMao() {
         println("\n$nome tem as seguintes cartas na mão:")
@@ -137,7 +132,7 @@ class Jogador(
         }
         println("\nTipo | Nome | Descrição | Ataque | Defesa | Estado do monstro")
         for (carta in cartasNaMao) {
-            println(carta)  // Exibe cada carta na mão do jogador
+            println(carta)
         }
         println("---------------------------------------------")
     }
@@ -153,19 +148,16 @@ class Jogador(
         }
         println("\nNome | Ataque | Defesa | Estado do monstro")
         monstrosNoCampo.joinToString("\n") { monstro ->
-            "[ ${monstro.nome.padEnd(21)} | A:${monstro.ataque.toString().padEnd(6)} | D:${
-                monstro.defesa.toString().padEnd(6)
-            } | ${monstro.estado} ]"
+            "[ ${monstro.nome.padEnd(21)} | A:${monstro.ataque.toString().padEnd(6)} | D:${monstro.defesa.toString().padEnd(6)} | ${monstro.estado} ]"
         }.also(::println)
         println("---------------------------------------------")
     }
 
     /**
-     * Função que permite ao jogador posicionar um monstro no campo de batalha.
+     * Permite ao jogador posicionar um monstro no campo de batalha.
      * O jogador deve escolher um monstro da sua mão e definir seu estado (Ataque ou Defesa).
      */
     fun posicionarMonstro() {
-        // Verifica se o jogador atingiu o limite de monstros no campo
         if (monstrosNoCampo.size >= 5) {
             println("Número máximo de monstros no campo atingido.")
             return
@@ -187,6 +179,7 @@ class Jogador(
                 cartasMonstro.map { it.toString() },
                 "Escolha uma carta de monstro para posicionar no tabuleiro: "
             )
+            if (escolha == -1) println("Escolha inválida! Por favor, selecione um número de opção válida.")
         }
 
         // Adiciona o monstro no campo e remove a carta da mão
@@ -207,7 +200,6 @@ class Jogador(
                     monstroEscolhido.estado = "Defesa"
                     break
                 }
-
                 else -> println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
             }
         }
@@ -216,11 +208,10 @@ class Jogador(
     }
 
     /**
-     * Função que permite ao jogador equipar um monstro com um item de equipamento da sua mão.
-     * O jogador escolhe um monstro e um equipamento, e então aumenta os atributos do monstro com base no equipamento.
+     * Permite ao jogador equipar um monstro com uma carta de equipamento da sua mão.
+     * O jogador escolhe um monstro e um equipamento e então aumenta os atributos do monstro com base no equipamento.
      */
     fun equiparMonstro() {
-        // Verifica se o jogador possui monstros no campo para equipar
         if (monstrosNoCampo.isEmpty()) {
             println("\nVocê não possui monstros no campo para equipar.")
             return
@@ -239,9 +230,10 @@ class Jogador(
         var escolhaMonstro = -1
         while (escolhaMonstro == -1) {
             escolhaMonstro = escolherCarta(
-                monstrosNoCampo.map { "${it.nome} - A:${it.ataque}, D:${it.defesa}" },
+                monstrosNoCampo.map { "${it.nome.padEnd(12)} - A:${it.ataque.toString().padEnd(4)} D:${it.defesa.toString().padEnd(4)}" },
                 "Escolha um monstro para equipar: "
             )
+            if (escolhaMonstro == -1) println("Escolha inválida! Por favor, selecione um número de opção válida.")
         }
         val monstroEscolhido = monstrosNoCampo[escolhaMonstro]
 
@@ -249,13 +241,14 @@ class Jogador(
         var escolhaEquipamento = -1
         while (escolhaEquipamento == -1) {
             escolhaEquipamento = escolherCarta(
-                cartasEquipamento.map { "${it.nome} - ${it.descricao} - A: ${it.ataque}, D: ${it.defesa}" },
+                cartasEquipamento.map { "${it.nome.padEnd(12)} - A:${it.ataque.toString().padEnd(4)} D:${it.defesa.toString().padEnd(4)}" },
                 "Escolha uma carta de equipamento para usar em ${monstroEscolhido.nome}: "
             )
+            if (escolhaEquipamento == -1) println("Escolha inválida! Por favor, selecione um número de opção válida.")
         }
         val equipamentoEscolhido = cartasEquipamento[escolhaEquipamento]
 
-        // Jogador escolhe qual atributo do monstro será aumentado (Ataque ou Defesa)
+        // Jogador é obridado a escolher qual atributo do monstro será aumentado (Ataque ou Defesa)
         while (true) {
             print("Escolha o atributo do monstro a ser aumentado pelo equipamento (A - Ataque, D - Defesa): ")
             when (readlnOrNull()?.lowercase()) {
@@ -270,7 +263,6 @@ class Jogador(
                     println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa.")
                     break
                 }
-
                 else -> println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
             }
         }
@@ -280,28 +272,30 @@ class Jogador(
     }
 
     /**
-     * Função que permite ao jogador atacar o oponente com monstros em posição de ataque.
+     * Permite ao jogador atacar o oponente com todos os seus monstros no tabuleiro em posição de ataque.
      * O jogador escolhe um monstro para atacar e o alvo (monstro do oponente ou ataque direto).
      */
     fun atacarOponente(oponente: Jogador) {
         // Filtra os monstros do jogador atual que estão em posição de ataque
         val monstrosEmAtaque = monstrosNoCampo.filter { it.estado == "Ataque" }.toMutableList()
 
-        // Se não houver monstros em posição de ataque, a jogada é invalidada
+        // Se não houver monstros em posição de ataque, jogador tem a chance de posicionar um monstro e tentar atacar novamente
         if (monstrosEmAtaque.isEmpty()) {
             println("$nome não tem monstros em posição de ataque para realizar o ataque!")
-            jogadasEscolhidas.remove("d") // Remove a opção de ataque da lista de jogadas disponíveis
+            jogadasEscolhidas.remove("d")
             return
         }
+
+        println("\nVidas:\n$nome: $vida\n${oponente.nome}: ${oponente.vida}\n")
 
         // Loop enquanto houver monstros em ataque e o oponente ainda tiver pontos de vida
         while (monstrosEmAtaque.isNotEmpty() && oponente.temVida()) {
             // Escolhe um monstro atacante
-            val atacante = escolherMonstro(monstrosEmAtaque, "Escolha um monstro para atacar:")
+            val atacante = escolherMonstro(monstrosEmAtaque, "\nEscolha um monstro do seu tabuleiro para atacar:")
 
             // Determina o alvo: se o oponente tiver monstros, escolhe um deles; caso contrário, será ataque direto
             val alvo = if (oponente.monstrosNoCampo.isNotEmpty()) {
-                escolherMonstro(oponente.monstrosNoCampo, "Escolha um monstro do oponente para atacar:")
+                escolherMonstro(oponente.monstrosNoCampo, "\nEscolha um monstro do oponente para atacar:")
             } else null
 
             if (alvo != null) {
@@ -327,6 +321,8 @@ class Jogador(
 
             // Atualiza a lista de monstros disponíveis para atacar
             monstrosEmAtaque.remove(atacante)
+
+            println("\nVidas:\n$nome: $vida\n${oponente.nome}: ${oponente.vida}")
         }
 
         // Verifica se o oponente perdeu todos os pontos de vida
@@ -334,7 +330,7 @@ class Jogador(
     }
 
     /**
-     * Função que permite ao jogador escolher um monstro de uma lista para atacar ou alterar seu estado.
+     * Permite ao jogador escolher um monstro de uma lista para atacar ou alterar seu estado.
      * Exibe as opções de monstros e valida a escolha do jogador.
      */
     private fun escolherMonstro(lista: List<CartaMonstro>, mensagem: String): CartaMonstro {
@@ -347,14 +343,14 @@ class Jogador(
         // Lê e valida a escolha do jogador
         var escolha: Int
         do {
-            print("Digite o número do monstro: ")
+            print("\nDigite o número do monstro: ")
             escolha = readlnOrNull()?.toIntOrNull() ?: -1
         } while (escolha !in 1..lista.size)
         return lista[escolha - 1] // Retorna o monstro escolhido
     }
 
     /**
-     * Função que processa o combate entre dois monstros, calculando o dano causado e atualizando os atributos.
+     * Processa o combate entre dois monstros, calculando o dano causado e atualizando os atributos.
      * A função considera o estado do alvo (Ataque ou Defesa) e aplica as regras de combate.
      */
     private fun processarAtaque(atacante: CartaMonstro, alvo: CartaMonstro, oponente: Jogador) {
@@ -365,7 +361,7 @@ class Jogador(
         when {
             diferenca > 0 -> {
                 // O atacante vence, causando dano ao oponente
-                println("${atacante.nome} destrói ${alvo.nome}! ${oponente.nome} perde $diferenca pontos de vida.")
+                println("\n${atacante.nome} destrói ${alvo.nome}! ${oponente.nome} perde $diferenca pontos de vida.")
                 oponente.vida -= diferenca
 
                 // Remove o monstro do oponente se ele foi derrotado
@@ -376,14 +372,14 @@ class Jogador(
             diferenca < 0 -> {
                 // O atacante perde o combate e seu ataque é reduzido
                 atacante.ataque += diferenca // Subtrai o valor absoluto da diferença
-                println("${atacante.nome} não foi forte o suficiente e perdeu ${-diferenca} pontos de ataque.")
+                println("\n${atacante.nome} não foi forte o suficiente e perdeu ${diferenca} pontos de ataque.")
             }
 
             else -> {
                 // Empate: ambos perdem 10% de seus atributos principais
                 atacante.ataque = (atacante.ataque * 0.9).toInt()
                 alvo.defesa = (alvo.defesa * 0.9).toInt()
-                println("${atacante.nome} e ${alvo.nome} empatam! Ambos perdem 10% de ataque e defesa, respectivamente.")
+                println("\n${atacante.nome} e ${alvo.nome} empatam! Ambos perdem 10% de ataque e defesa, respectivamente.")
             }
         }
 
@@ -401,18 +397,17 @@ class Jogador(
     }
 
     /**
-     * Função que permite ao jogador alterar o estado de um monstro no campo (Ataque <-> Defesa).
+     * Permite ao jogador alterar o estado de um monstro no campo (Ataque <-> Defesa).
      * O jogador escolhe um monstro e alterna seu estado entre Ataque e Defesa.
      */
     fun alterarEstadoMonstro() {
-        // Verifica se há monstros no campo para alterar estado
         if (monstrosNoCampo.isEmpty()) {
             println("\nNão há monstros no campo para alterar o estado.")
             return
         }
 
-        // Permite ao jogador escolher um monstro e alternar seu estado (Ataque <-> Defesa)
-        val monstro = escolherMonstro(monstrosNoCampo, "Escolha um monstro para alterar o estado:")
+        // Jogador escolhe um monstro para alternar o estado (Ataque <-> Defesa)
+        val monstro = escolherMonstro(monstrosNoCampo, "\nEscolha um monstro para alterar o estado:")
         monstro.estado = if (monstro.estado == "Ataque") "Defesa" else "Ataque"
         println("${monstro.nome} agora está em posição de ${monstro.estado}.")
     }
