@@ -92,7 +92,7 @@ class Baralho {
             println("${GREEN}Total de cartas válidas: $linhasValidas${RESET}")
             println("${YELLOW}Total de linhas inválidas: ${totalLinhas - linhasValidas}${RESET}")
         } else {
-            println("\nErro: Nenhuma linha encontrada no arquivo ou arquivo vazio.")
+            println("\n${RED}Erro: Nenhuma linha encontrada no arquivo ou arquivo vazio.${RESET}")
         }
     }
 

@@ -37,12 +37,12 @@ class Jogador(
     fun comprarCarta(baralho: MutableList<Carta>) {
         if (baralho.isNotEmpty()) {
             while (cartasNaMao.size == 10) {
-                println("\n$nome atingiu o limite de 10 cartas. Descarte uma carta.")
+                println("\n${YELLOW}$nome atingiu o limite de 10 cartas. Descarte uma carta.${RESET}")
                 descartar()
             }
             cartasNaMao.add(baralho.removeAt(0))
         } else {
-            println("\nBaralho não possui mais cartas para comprar.")
+            println("${RED}nBaralho não possui mais cartas para comprar.${RESET}")
         }
     }
 
@@ -52,7 +52,7 @@ class Jogador(
      */
     fun descartar() {
         if (cartasNaMao.isEmpty()) {
-            println("\n$nome não tem cartas na mão para descartar.")
+            println("\n${YELLOW}$nome não tem cartas na mão para descartar.${RESET}")
             return
         }
 
@@ -65,7 +65,7 @@ class Jogador(
         } else {
             // Jogador pode tentar descartar de novo nessa rodada se inserir um valor inválido
             jogadasEscolhidas.remove("c")
-            println("Escolha inválida. Não foi possível descartar, tente novamente.")
+            println("${RED}Escolha inválida. Não foi possível descartar, tente novamente.${RESET}")
         }
     }
 
@@ -108,7 +108,6 @@ class Jogador(
             }
 
             println("\n----------------------------------------------------------------------")
-
         } while (!fimRodada)
 
         limparJogadas()  // Limpa as jogadas após o fim da rodada
@@ -127,7 +126,7 @@ class Jogador(
     fun mostrarMao() {
         println("\n$nome tem as seguintes cartas na mão:")
         if (cartasNaMao.isEmpty()) {
-            println("Nenhuma carta na mão")  // Caso o jogador não tenha cartas
+            println("Nenhuma carta na mão")
             return
         }
         println("\nTipo | Nome | Descrição | Ataque | Defesa | Estado do monstro")
@@ -143,7 +142,8 @@ class Jogador(
     fun mostrarMonstroTabuleiro() {
         println("\nMonstros no tabuleiro de $nome")
         if (monstrosNoCampo.isEmpty()) {
-            println("Nenhum monstro posicionado")  // Caso o jogador não tenha monstros no campo
+            println("Nenhum monstro posicionado")
+            println("---------------------------------------------")
             return
         }
         println("\nNome | Ataque | Defesa | Estado do monstro")
@@ -159,7 +159,7 @@ class Jogador(
      */
     fun posicionarMonstro() {
         if (monstrosNoCampo.size >= 5) {
-            println("Número máximo de monstros no campo atingido.")
+            println("${RED}Número máximo de monstros no campo atingido.${RESET}")
             return
         }
 
@@ -168,7 +168,7 @@ class Jogador(
 
         // Verifica se o jogador tem cartas de monstro para posicionar
         if (cartasMonstro.isEmpty()) {
-            println("Você não possui cartas do tipo monstro para posicionar.")
+            println("${YELLOW}Você não possui cartas do tipo monstro para posicionar.${RESET}")
             return
         }
 
@@ -179,7 +179,7 @@ class Jogador(
                 cartasMonstro.map { it.toString() },
                 "Escolha uma carta de monstro para posicionar no tabuleiro: "
             )
-            if (escolha == -1) println("Escolha inválida! Por favor, selecione um número de opção válida.")
+            if (escolha == -1) println("${RED}Escolha inválida! Por favor, selecione um número de opção válida.${RESET}")
         }
 
         // Adiciona o monstro no campo e remove a carta da mão
@@ -200,7 +200,7 @@ class Jogador(
                     monstroEscolhido.estado = "Defesa"
                     break
                 }
-                else -> println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
+                else -> println("${RED}Escolha inválida. Por favor, escolha 'A' ou 'D'.${RESET}")
             }
         }
 
@@ -222,7 +222,7 @@ class Jogador(
 
         // Verifica se o jogador possui equipamentos para usar
         if (cartasEquipamento.isEmpty()) {
-            println("Você não possui cartas de equipamento na mão.")
+            println("${YELLOW}Você não possui cartas de equipamento na mão.${RESET}")
             return
         }
 
@@ -233,7 +233,7 @@ class Jogador(
                 monstrosNoCampo.map { "${it.nome.padEnd(12)} - A:${it.ataque.toString().padEnd(4)} D:${it.defesa.toString().padEnd(4)}" },
                 "Escolha um monstro para equipar: "
             )
-            if (escolhaMonstro == -1) println("Escolha inválida! Por favor, selecione um número de opção válida.")
+            if (escolhaMonstro == -1) println("${RED}Escolha inválida! Por favor, selecione um número de opção válida.${RESET}")
         }
         val monstroEscolhido = monstrosNoCampo[escolhaMonstro]
 
@@ -244,7 +244,7 @@ class Jogador(
                 cartasEquipamento.map { "${it.nome.padEnd(12)} - A:${it.ataque.toString().padEnd(4)} D:${it.defesa.toString().padEnd(4)}" },
                 "Escolha uma carta de equipamento para usar em ${monstroEscolhido.nome}: "
             )
-            if (escolhaEquipamento == -1) println("Escolha inválida! Por favor, selecione um número de opção válida.")
+            if (escolhaEquipamento == -1) println("${RED}Escolha inválida! Por favor, selecione um número de opção válida.${RESET}")
         }
         val equipamentoEscolhido = cartasEquipamento[escolhaEquipamento]
 
@@ -263,7 +263,7 @@ class Jogador(
                     println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa.")
                     break
                 }
-                else -> println("Escolha inválida. Por favor, escolha 'A' ou 'D'.")
+                else -> println("${RED}Escolha inválida. Por favor, escolha 'A' ou 'D'.${RESET}")
             }
         }
 
@@ -281,7 +281,7 @@ class Jogador(
 
         // Se não houver monstros em posição de ataque, jogador tem a chance de posicionar um monstro e tentar atacar novamente
         if (monstrosEmAtaque.isEmpty()) {
-            println("$nome não tem monstros em posição de ataque para realizar o ataque!")
+            println("${YELLOW}$nome não tem monstros em posição de ataque para realizar o ataque!${RESET}")
             jogadasEscolhidas.remove("d")
             return
         }
@@ -402,7 +402,7 @@ class Jogador(
      */
     fun alterarEstadoMonstro() {
         if (monstrosNoCampo.isEmpty()) {
-            println("\nNão há monstros no campo para alterar o estado.")
+            println("${YELLOW}\nNão há monstros no campo para alterar o estado.${RESET}")
             return
         }
 
