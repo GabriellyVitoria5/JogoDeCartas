@@ -1,3 +1,12 @@
+/**
+ * Classe responsável por gerenciar o fluxo principal do jogo.
+ * Controla as ações dos jogadores, a distribuição de cartas, e o progresso das rodadas.
+ * Também gerencia as condições de vitória e o término do jogo.
+ *
+ * @param jogador1 O primeiro jogador.
+ * @param jogador2 O segundo jogador.
+ * @param baralho O baralho utilizado durante o jogo.
+ */
 class Jogo(
     val jogador1: Jogador,
     private val jogador2: Jogador,
@@ -6,9 +15,13 @@ class Jogo(
 
     // Controle sobre qual jogador irá jogar: true - jogador 1, false - jogador 2
     var vezJogador = true
-    var rodada = 1 // Variável para rastrear a rodada atual
+    private var rodada = 1 // Variável para rastrear a rodada atual
 
-    // Função para distribuir 5 cartas para um jogador no início ou quando ele ficar sem cartas
+    /**
+     * Função para distribuir 5 cartas para um jogador.
+     * Verifica se o jogador está sem cartas na mão e, se houver cartas disponíveis no baralho, realiza a distribuição.
+     * @param jogador O jogador que receberá as cartas.
+     */
     fun distribuirCartas(jogador: Jogador) {
         val maxCartasPorJogador = 5
 
@@ -35,7 +48,11 @@ class Jogo(
         }
     }
 
-    // Imprimir o menu dinâmico com as jogadas disponíveis para o jogador
+    /**
+     * Imprime o menu dinâmico com as jogadas disponíveis para o jogador.
+     * As opções são ajustadas com base nas jogadas já realizadas pelo jogador na rodada atual.
+     * @param jogador O jogador atual.
+     */
     fun imprimirMenuDinamico(jogador: Jogador) {
         println("\n~ Menu de jogadas ~")
         println("\nEscolha uma ou mais ações, ou digite 'f' para finalizar a rodada:")
@@ -49,7 +66,12 @@ class Jogo(
         println("f) Passar a vez")
     }
 
-    // Cada opção chama uma função correspondente da classe Jogador com base na jogada escolhida
+    /**
+     * Processa as jogadas escolhidas pelo jogador.
+     * Valida as opções e executa a ação correspondente, atualizando o estado do jogo.
+     * @param jogador O jogador que está realizando a jogada.
+     * @param op A opção escolhida pelo jogador.
+     */
     fun processarJogadas(jogador: Jogador, op: String) {
 
         // Verificar se a jogada já foi realizada
@@ -105,34 +127,26 @@ class Jogo(
         }
     }
 
-    // Atualizar o número da rodada ao final do turno de cada jogador
+    /**
+     * Atualiza o número da rodada ao final do turno de cada jogador.
+     * Incrementa a variável `rodada`.
+     */
     fun atualizarRodada() {
         rodada++
     }
 
-    // Função para verificar se os dois jogadores têm vida para continuar o jogo
+    /**
+     * Verifica se ambos os jogadores ainda possuem pontos de vida para continuar o jogo.
+     * @return `true` se ambos os jogadores têm vida, caso contrário `false`.
+     */
     fun jogadoresTemVida(): Boolean {
         return (jogador1.temVida() && jogador2.temVida()) // Retorna verdadeiro se ambos tiverem vida
     }
 
-    // Função principal para iniciar o jogo
-    fun iniciarJogo() {
-        // O jogo continua enquanto houver cartas no baralho e ambos os jogadores tiverem vida
-        while (baralho.temCartas() && (jogador1.temVida() && jogador2.temVida())) {
-            println("\n----------------------------------------------------------------------")
-            println("\nRodada de ${jogador1.nome}:")
-            jogador1.jogar(this) // Jogador 1 faz sua jogada
-            if (!jogador2.temVida()) break // Se o jogador 2 perder a vida, o jogo termina
-
-            println("\n----------------------------------------------------------------------")
-            println("\nRodada de ${jogador2.nome}:")
-            jogador2.jogar(this) // Jogador 2 faz sua jogada
-
-            atualizarRodada() // Atualiza a rodada após o turno de ambos os jogadores
-        }
-    }
-
-    // Função para calcular o vencedor do jogo baseado na vida dos jogadores
+    /**
+     * Calcula o vencedor do jogo com base nos pontos de vida dos jogadores.
+     * Exibe o resultado indicando o vencedor ou se o jogo terminou empatado.
+     */
     fun calcularVencedor() {
         val vencedor: (Jogador, Jogador) -> String = { jogador1, jogador2 ->
             when {
