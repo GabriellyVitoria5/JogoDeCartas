@@ -89,6 +89,7 @@ class Jogo(
             "b" -> {
                 println("${jogador.nome} escolheu equipar um monstro com uma carta de equipamento.")
                 jogador.equiparMonstro()
+                jogador.jogadasEscolhidas.add(op)
             }
             "c" -> {
                 println("${jogador.nome} escolheu descartar uma carta da mão.")
@@ -99,6 +100,7 @@ class Jogo(
                 // Restrição de ataques na primeira rodada
                 if (rodada == 1) {
                     println("Ataques só são permitidos a partir da segunda rodada.")
+                    jogador.jogadasEscolhidas.add(op)
                     return
                 }
 

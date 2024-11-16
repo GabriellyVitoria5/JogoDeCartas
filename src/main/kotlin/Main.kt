@@ -57,9 +57,6 @@ fun main() {
 
         // Atualiza a rodada do jogo
         jogo.atualizarRodada()
-
-        // Limpa a mão do jogador 1 ao final do turno
-        jogador1.cartasNaMao.clear()
     }
 
     // Verifica o motivo pelo qual o jogo terminou (baralho vazio ou jogador sem vida)
