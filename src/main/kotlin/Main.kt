@@ -3,9 +3,11 @@
  * Utilizados para destacar informações de diferentes jogadores e estados do jogo.
  */
 const val RESET = "\u001B[0m"   // Reseta a cor para o padrão
-const val RED = "\u001B[31m"    // Cor vermelha para jogador 1
-const val BLUE = "\u001B[34m"   // Cor azul para jogador 2
+const val RED = "\u001B[31m"    // Cor vermelha para mensagens de erro
+const val CYAN = "\u001B[36m"   // Cor ciano para jogador 1
+const val MAGENTA = "\u001B[35m" // Cor magenta para jogador 2
 const val GREEN = "\u001B[32m"  // Cor verde para destacar informações gerais
+const val YELLOW = "\u001B[33m" // Cor amarela para informações de jogo e destaque
 
 fun main() {
     // Cria uma instância de baralho e carrega as cartas a partir de um arquivo CSV
@@ -16,7 +18,7 @@ fun main() {
 
     // Verifica se o baralho está vazio, exibe erro e termina a execução caso necessário
     if (baralho.cartas.isEmpty()) {
-        println("\nErro: O baralho está vazio. Verifique o arquivo CSV.")
+        println("\n${RED}Erro: O baralho está vazio. Verifique o arquivo CSV.${RESET}")
         return
     }
 
@@ -43,11 +45,11 @@ fun main() {
         exibirEstadoJogo(jogador1, jogador2, numTurno)
 
         // Turno do Jogador 1
-        turnoJogador(jogo, jogador1, baralho, RED)
+        turnoJogador(jogo, jogador1, baralho, CYAN)
         if (!jogador2.temVida()) break  // Verifica se o jogador 2 perdeu
 
         // Turno do Jogador 2
-        turnoJogador(jogo, jogador2, baralho, BLUE)
+        turnoJogador(jogo, jogador2, baralho, MAGENTA)
         if (!jogador1.temVida()) break  // Verifica se o jogador 1 perdeu
 
         // Incrementa o número do turno após ambos os jogadores jogarem
@@ -62,7 +64,7 @@ fun main() {
 
     // Verifica o motivo pelo qual o jogo terminou (baralho vazio ou jogador sem vida)
     if (baralho.cartas.isEmpty()) {
-        println("O jogo terminou, porque o baralho não tem mais cartas.")
+        println("${YELLOW}O jogo terminou, porque o baralho não tem mais cartas.${RESET}")
     }
 
     // Exibe o resultado final do jogo (vencedor ou empate)
@@ -78,20 +80,20 @@ fun main() {
  */
 fun exibirEstadoJogo(jogador1: Jogador, jogador2: Jogador, numTurno: Int) {
     // Exibe o título e a rodada do jogo
-    println("\n---------------------------------------------")
+    println("\n${MAGENTA}---------------------------------------------${RESET}")
     println("\n${GREEN}Estado do jogo - $numTurno° partida:${RESET}\n")
 
     // Exibe informações sobre o jogador 1
-    println("${jogador1.nome} - Vida: ${jogador1.vida}")
+    println("${CYAN}${jogador1.nome}${RESET} - Vida: ${jogador1.vida}")
     jogador1.mostrarMao()  // Exibe as cartas na mão do jogador 1
     jogador1.mostrarMonstroTabuleiro()  // Exibe os monstros no campo do jogador 1
 
     // Exibe informações sobre o jogador 2
-    println("\n${jogador2.nome} - Vida: ${jogador2.vida}")
+    println("\n${MAGENTA}${jogador2.nome}${RESET} - Vida: ${jogador2.vida}")
     jogador2.mostrarMao()  // Exibe as cartas na mão do jogador 2
     jogador2.mostrarMonstroTabuleiro()  // Exibe os monstros no campo do jogador 2
 
-    println("\n---------------------------------------------${RESET}")
+    println("\n${MAGENTA}---------------------------------------------${RESET}")
 }
 
 /**
