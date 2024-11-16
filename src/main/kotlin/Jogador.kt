@@ -215,8 +215,6 @@ class Jogador(
         cartasNaMao.remove(equipamentoEscolhido)
     }
 
-
-    // Sugestão para otimização do atacarOponente --------------------------------------------------------------------------------
     fun atacarOponente(oponente: Jogador) {
         // Filtra os monstros do jogador atual que estão em posição de ataque
         val monstrosEmAtaque = monstrosNoCampo.filter { it.estado == "Ataque" }.toMutableList()
@@ -254,8 +252,13 @@ class Jogador(
             }
 
             // Remove o atacante se ele for destruído
-            if (atacante.ataque <= 0 || atacante.defesa <= 0) monstrosNoCampo.remove(atacante)
-            monstrosEmAtaque.remove(atacante) // Atualiza a lista de monstros disponíveis para atacar
+            if (atacante.ataque <= 0 || atacante.defesa <= 0) {
+                monstrosNoCampo.remove(atacante)
+                println("${atacante.nome} foi destruído e removido do campo.")
+            }
+
+            // Atualiza a lista de monstros disponíveis para atacar
+            monstrosEmAtaque.remove(atacante)
         }
 
         // Verifica se o oponente perdeu todos os pontos de vida
@@ -288,6 +291,10 @@ class Jogador(
                 // O atacante vence, causando dano ao oponente
                 println("${atacante.nome} destrói ${alvo.nome}! ${oponente.nome} perde $diferenca pontos de vida.")
                 oponente.vida -= diferenca
+
+                // Remove o monstro do oponente se ele foi derrotado
+                oponente.monstrosNoCampo.remove(alvo)
+                println("${alvo.nome} foi destruído e removido do campo de ${oponente.nome}.")
             }
 
             diferenca < 0 -> {
@@ -303,10 +310,20 @@ class Jogador(
                 println("${atacante.nome} e ${alvo.nome} empatam! Ambos perdem 10% de ataque e defesa, respectivamente.")
             }
         }
-    }
-// --------------------------------------------------------------------------------------------------------------------
 
-    // Sugestão para otimizar o alterarEstadoMonstro -----------------------------------------------------------------------
+        // Verifica se o monstro atacante foi derrotado e o remove
+        if (atacante.ataque <= 0 || atacante.defesa <= 0) {
+            monstrosNoCampo.remove(atacante)
+            println("${atacante.nome} foi destruído e removido do campo.")
+        }
+
+        // Verifica se o monstro do oponente foi derrotado e o remove
+        if (alvo.ataque <= 0 || alvo.defesa <= 0) {
+            oponente.monstrosNoCampo.remove(alvo)
+            println("${alvo.nome} foi destruído e removido do campo de ${oponente.nome}.")
+        }
+    }
+
     fun alterarEstadoMonstro() {
         // Verifica se há monstros no campo para alterar estado
         if (monstrosNoCampo.isEmpty()) {
@@ -319,5 +336,4 @@ class Jogador(
         monstro.estado = if (monstro.estado == "Ataque") "Defesa" else "Ataque"
         println("${monstro.nome} agora está em posição de ${monstro.estado}.")
     }
-// --------------------------------------------------------------------------------------------------------------------
 }
