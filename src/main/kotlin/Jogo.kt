@@ -77,8 +77,7 @@ class Jogo(
     }
 
     /**
-     *
-     *
+     * Ordem do que acontecerá no jogo está aqui
      */
     fun iniciarJogo(){
         // Imprimindo mensagens iniciais
@@ -126,6 +125,7 @@ class Jogo(
     fun turnoJogador(jogador: Jogador, cor: String) {
         // Exibe o turno do jogador atual com a cor especificada
         println("\n${cor}Turno de ${jogador.nome}:${RESET}")
+        println("${cor}Vida ${jogador.vida}${RESET}")
 
         // Define se é a vez do jogador 1 ou 2
         vezJogador = jogador == jogador1
@@ -298,26 +298,26 @@ class Jogo(
                     diferenca > 0 -> { // Atacante vence, derrota o monstro e causa dano ao oponente
                         oponente.monstrosNoCampo.remove(monstroOponente)
                         oponente.vida -= diferenca
-                        println("\nO ataque foi um sucesso! ${monstroAtacante.nome} superar o ataque do monstro e destrói ${monstroOponente.nome}! ${oponente.nome} perde $diferenca pontos de vida durante o ataque.")
+                        println("\n${GREEN}O ataque foi um sucesso! ${monstroAtacante.nome} superar o ataque do monstro e destrói ${monstroOponente.nome}! ${oponente.nome} perde $diferenca pontos de vida durante o ataque.${RESET}")
                         println("${monstroOponente.nome} foi destruído e removido do campo de ${oponente.nome}.")
                     }
                     diferenca < 0 -> { // O atacante perde o combate e seu ataque é reduzido
                         monstroAtacante.ataque += diferenca // Subtrai o valor absoluto da diferença
-                        println("\nO ataque falhou, pois ${monstroAtacante.nome} não é forte o suficiente para superar o ataque de ${monstroOponente.nome}. Seu monstro perde ${-diferenca} pontos de ataque ao receber um golpe de ${monstroOponente.nome}!")
+                        println("\n${YELLOW}O ataque falhou, pois ${monstroAtacante.nome} não é forte o suficiente para superar o ataque de ${monstroOponente.nome}. Seu monstro perde ${-diferenca} pontos de ataque ao receber um golpe de ${monstroOponente.nome}!${RESET}")
                     }
                     else -> { // Empate no ataque: defesa irá desempatar
                         val ataquePerdidoCalculado = (monstroOponente.ataque * 0.1).toInt()
                         when{
                             monstroAtacante.defesa > monstroOponente.ataque ->{ // Atacante perde 10% deataque
                                 monstroOponente.ataque -= ataquePerdidoCalculado
-                                println("\nOs dois monstros são igualmente fortes! Mas seu monstro ${monstroAtacante.nome} tinha mais defesa para resistir a luta e consegue tirar $ataquePerdidoCalculado pontos de ataque do monstro do oponente")
+                                println("\n${GREEN}Os dois monstros são igualmente fortes! Mas seu monstro ${monstroAtacante.nome} tinha mais defesa para resistir a luta e consegue tirar $ataquePerdidoCalculado pontos de ataque do monstro do oponente${RESET}")
                             }
                             monstroAtacante.defesa < monstroOponente.ataque ->{ // Monstro do oponente perde 10% ataque
                                 monstroAtacante.ataque -= ataquePerdidoCalculado
-                                println("\nOs dois monstros são igualmente fortes! Mas ${monstroOponente.nome} tinha mais defesa para resistir ao ataque e conseguiu tirar $ataquePerdidoCalculado pontos de ataque do seu monstro!")
+                                println("\n${YELLOW}Os dois monstros são igualmente fortes! Mas ${monstroOponente.nome} tinha mais defesa para resistir ao ataque e conseguiu tirar $ataquePerdidoCalculado pontos de ataque do seu monstro!${RESET}")
                             }
                             else -> { // Empate na defesa também: nada acontece
-                                println("\nOs dois monstros são igualmente fortes! Suas defesas também são as mesmas! O ataque não surtiu efeito em nenhum dos lados.")
+                                println("${YELLOW}\nOs dois monstros são igualmente fortes! Suas defesas também são as mesmas! O ataque não surtiu efeito em nenhum dos lados.${RESET}")
                             }
                         }
                     }
@@ -329,19 +329,19 @@ class Jogo(
                     diferenca > 0 -> { // Atacante vence, derrota o monstro e causa dano ao oponente
                         oponente.monstrosNoCampo.remove(monstroOponente)
                         oponente.vida -= diferenca
-                        println("\nO ataque foi um sucesso! ${monstroAtacante.nome} destrói ${monstroOponente.nome}! ${oponente.nome} perde $diferenca pontos de vida durante o ataque.")
+                        println("\n${GREEN}O ataque foi um sucesso! ${monstroAtacante.nome} destrói ${monstroOponente.nome}! ${oponente.nome} perde $diferenca pontos de vida durante o ataque.${RESET}")
                         println("${monstroOponente.nome} foi destruído e removido do campo de ${oponente.nome}.")
                     }
                     diferenca < 0 -> { // O atacante perde o combate e seu ataque é reduzido
                         monstroAtacante.ataque += diferenca // Subtrai o valor absoluto da diferença
-                        println("\nO ataque falhou, pois ${monstroAtacante.nome} não é forte o suficiente para superar as defesas de ${monstroOponente.nome}. Seu monstro perde $diferenca pontos de ataque durante a luta!")
+                        println("\n${YELLOW}O ataque falhou, pois ${monstroAtacante.nome} não é forte o suficiente para superar as defesas de ${monstroOponente.nome}. Seu monstro perde $diferenca pontos de ataque durante a luta!${RESET}")
                     }
                     else -> { // Empate: Monstro do jogador atual perde 10% pontos de ataque, e monstro do oponente perde 10% pontos de defesa
                         val ataquePerdidoCalculado = (monstroAtacante.ataque * 0.1).toInt()
                         val defesaPerdidaCalculada = (monstroOponente.defesa * 0.1).toInt()
                         monstroAtacante.ataque -= ataquePerdidoCalculado
                         monstroOponente.defesa -= defesaPerdidaCalculada
-                        println("\nO ataque do seu monstro ${monstroAtacante.nome} é igual à defesa de ${monstroOponente.nome}! Durante a luta, seu monstro perde $ataquePerdidoCalculado pontos de ataque, e ${monstroOponente.nome} perde ${defesaPerdidaCalculada} pontos de defesa!")
+                        println("\n${YELLOW}O ataque do seu monstro ${monstroAtacante.nome} é igual à defesa de ${monstroOponente.nome}! Durante a luta, seu monstro perde $ataquePerdidoCalculado pontos de ataque, e ${monstroOponente.nome} perde $defesaPerdidaCalculada pontos de defesa!${RESET}")
                     }
                 }
             }
@@ -349,19 +349,19 @@ class Jogo(
             // Verifica se o monstro atacante foi derrotado e o remove
             if (monstroAtacante.ataque <= 0 || monstroAtacante.defesa <= 0) {
                 jogadorAtual.monstrosNoCampo.remove(monstroAtacante)
-                println("\nSeu monstro sofreu graves ferimentos durante a luta e não conseguiu sobreviver. ${monstroAtacante.nome} será removido do campo.")
+                println("\n${YELLOW}Seu monstro sofreu graves ferimentos durante a luta e não conseguiu sobreviver. ${monstroAtacante.nome} será removido do campo.${RESET}")
             }
 
             // Verifica se o monstro do oponente foi derrotado e o remove
             if (monstroOponente.ataque <= 0 || monstroOponente.defesa <= 0) {
                 oponente.monstrosNoCampo.remove(monstroOponente)
-                println("\nMonstro sofreu graves ferimentos durante a luta e não conseguiu sobreviver. ${monstroOponente.nome} será removido do campo.")
+                println("\n${YELLOW}Monstro sofreu graves ferimentos durante a luta e não conseguiu sobreviver. ${monstroOponente.nome} será removido do campo.${RESET}")
             }
         }
         else{
             // Oponente sofrerá ataque direto
             oponente.vida -= monstroAtacante.ataque
-            println("${monstroAtacante.nome} realiza um ataque direto! ${oponente.nome} perde ${monstroAtacante.ataque} pontos de vida.\n")
+            println("${GREEN}${monstroAtacante.nome} realiza um ataque direto! ${oponente.nome} perde ${monstroAtacante.ataque} pontos de vida.${RESET}\n")
         }
     }
 
