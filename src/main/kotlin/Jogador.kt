@@ -8,7 +8,7 @@ class Jogador(
     val nome: String,
 ) {
     val cartasNaMao: MutableList<Carta> = mutableListOf()
-    private val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()
+    val monstrosNoCampo: MutableList<CartaMonstro> = mutableListOf()
     var vida: Int = 10000
     val jogadasEscolhidas: MutableList<String> = mutableListOf()
 
@@ -20,7 +20,7 @@ class Jogador(
      * @param prompt Mensagem exibida solicitando que o jogador faça sua escolha.
      * @return O índice da carta escolhida ou -1 se a escolha for inválida.
      */
-    private fun escolherCarta(opcoes: List<String>, prompt: String): Int {
+    fun escolherCarta(opcoes: List<String>, prompt: String): Int {
         println("\nCartas disponíveis:")
         opcoes.forEachIndexed { index, carta -> println("Opção ${index + 1}: $carta") }
         print("\n$prompt")
@@ -275,7 +275,7 @@ class Jogador(
      * Permite ao jogador atacar o oponente com todos os seus monstros no tabuleiro em posição de ataque.
      * O jogador escolhe um monstro para atacar e o alvo (monstro do oponente ou ataque direto).
      */
-    fun atacarOponente(oponente: Jogador) {
+    fun atacarOponente(oponente: Jogador, jogo: Jogo) {
         // Filtra os monstros do jogador atual que estão em posição de ataque
         val monstrosEmAtaque = monstrosNoCampo.filter { it.estado == "Ataque" }.toMutableList()
 
@@ -286,114 +286,31 @@ class Jogador(
             return
         }
 
-        println("\nVidas:\n$nome: $vida\n${oponente.nome}: ${oponente.vida}\n")
+        println("\nVidas:\n$nome: $vida\n${oponente.nome}: ${oponente.vida}")
 
         // Loop enquanto houver monstros em ataque e o oponente ainda tiver pontos de vida
         while (monstrosEmAtaque.isNotEmpty() && oponente.temVida()) {
             // Escolhe um monstro atacante
-            val atacante = escolherMonstro(monstrosEmAtaque, "\nEscolha um monstro do seu tabuleiro para atacar:")
-
-            // Determina o alvo: se o oponente tiver monstros, escolhe um deles; caso contrário, será ataque direto
-            val alvo = if (oponente.monstrosNoCampo.isNotEmpty()) {
-                escolherMonstro(oponente.monstrosNoCampo, "\nEscolha um monstro do oponente para atacar:")
-            } else null
-
-            if (alvo != null) {
-                // Processa o ataque contra um monstro adversário
-                processarAtaque(atacante, alvo, oponente)
-
-                // Remove o alvo se ele for destruído
-                if (alvo.ataque <= 0 || alvo.defesa <= 0) {
-                    oponente.monstrosNoCampo.remove(alvo)
-                    println("${alvo.nome} foi destruído e removido do campo de ${oponente.nome}.")
-                }
-            } else {
-                // Realiza ataque direto caso não haja monstros para defender
-                oponente.vida -= atacante.ataque
-                println("${atacante.nome} realizou um ataque direto! ${oponente.nome} perde ${atacante.ataque} pontos de vida.")
+            var escolha = -1
+            while (escolha == -1) {
+                escolha = escolherCarta(
+                    monstrosEmAtaque.map { "${it.nome.padEnd(12)} - A:${it.ataque.toString().padEnd(4)} D:${it.defesa.toString().padEnd(4)}" },
+                    "Escolha um monstro no seu tabuleiro para usar contra o oponente: "
+                )
+                if (escolha == -1) println("${RED}Escolha inválida! Por favor, selecione um número de opção válida.${RESET}")
             }
+            val monstroAtacante = monstrosEmAtaque[escolha]
 
-            // Remove o atacante se ele for destruído
-            if (atacante.ataque <= 0 || atacante.defesa <= 0) {
-                monstrosNoCampo.remove(atacante)
-                println("${atacante.nome} foi destruído e removido do campo.")
-            }
+            jogo.processarAtaque(this, monstroAtacante, oponente)
 
             // Atualiza a lista de monstros disponíveis para atacar
-            monstrosEmAtaque.remove(atacante)
+            monstrosEmAtaque.remove(monstroAtacante)
 
             println("\nVidas:\n$nome: $vida\n${oponente.nome}: ${oponente.vida}")
         }
 
         // Verifica se o oponente perdeu todos os pontos de vida
         if (!oponente.temVida()) println("${oponente.nome} perdeu todos os pontos de vida! Partida encerrada.")
-    }
-
-    /**
-     * Permite ao jogador escolher um monstro de uma lista para atacar ou alterar seu estado.
-     * Exibe as opções de monstros e valida a escolha do jogador.
-     */
-    private fun escolherMonstro(lista: List<CartaMonstro>, mensagem: String): CartaMonstro {
-        // Exibe a lista de opções de monstros para o jogador
-        println(mensagem)
-        lista.forEachIndexed { index, monstro ->
-            println("Opção ${index + 1}: ${monstro.nome} - A:${monstro.ataque}, D:${monstro.defesa} Estado: ${monstro.estado}")
-        }
-
-        // Lê e valida a escolha do jogador
-        var escolha: Int
-        do {
-            print("\nDigite o número do monstro: ")
-            escolha = readlnOrNull()?.toIntOrNull() ?: -1
-        } while (escolha !in 1..lista.size)
-        return lista[escolha - 1] // Retorna o monstro escolhido
-    }
-
-    /**
-     * Processa o combate entre dois monstros, calculando o dano causado e atualizando os atributos.
-     * A função considera o estado do alvo (Ataque ou Defesa) e aplica as regras de combate.
-     */
-    private fun processarAtaque(atacante: CartaMonstro, alvo: CartaMonstro, oponente: Jogador) {
-        // Calcula a diferença de ataque entre o atacante e o alvo (considerando o estado do alvo)
-        val diferenca = atacante.ataque - (if (alvo.estado == "Defesa") alvo.defesa else alvo.ataque)
-
-        // Aplica as regras de combate com base na diferença de valores
-        when {
-            diferenca > 0 -> {
-                // O atacante vence, causando dano ao oponente
-                println("\n${atacante.nome} destrói ${alvo.nome}! ${oponente.nome} perde $diferenca pontos de vida.")
-                oponente.vida -= diferenca
-
-                // Remove o monstro do oponente se ele foi derrotado
-                oponente.monstrosNoCampo.remove(alvo)
-                println("${alvo.nome} foi destruído e removido do campo de ${oponente.nome}.")
-            }
-
-            diferenca < 0 -> {
-                // O atacante perde o combate e seu ataque é reduzido
-                atacante.ataque += diferenca // Subtrai o valor absoluto da diferença
-                println("\n${atacante.nome} não foi forte o suficiente e perdeu ${diferenca} pontos de ataque.")
-            }
-
-            else -> {
-                // Empate: ambos perdem 10% de seus atributos principais
-                atacante.ataque = (atacante.ataque * 0.9).toInt()
-                alvo.defesa = (alvo.defesa * 0.9).toInt()
-                println("\n${atacante.nome} e ${alvo.nome} empatam! Ambos perdem 10% de ataque e defesa, respectivamente.")
-            }
-        }
-
-        // Verifica se o monstro atacante foi derrotado e o remove
-        if (atacante.ataque <= 0 || atacante.defesa <= 0) {
-            monstrosNoCampo.remove(atacante)
-            println("${atacante.nome} foi destruído e removido do campo.")
-        }
-
-        // Verifica se o monstro do oponente foi derrotado e o remove
-        if (alvo.ataque <= 0 || alvo.defesa <= 0) {
-            oponente.monstrosNoCampo.remove(alvo)
-            println("${alvo.nome} foi destruído e removido do campo de ${oponente.nome}.")
-        }
     }
 
     /**
@@ -407,7 +324,15 @@ class Jogador(
         }
 
         // Jogador escolhe um monstro para alternar o estado (Ataque <-> Defesa)
-        val monstro = escolherMonstro(monstrosNoCampo, "\nEscolha um monstro para alterar o estado:")
+        var escolha = -1
+        while (escolha == -1) {
+            escolha = escolherCarta(
+                monstrosNoCampo.map { "${it.nome.padEnd(12)} - A:${it.ataque.toString().padEnd(4)} D:${it.defesa.toString().padEnd(4)}" },
+                "Escolha um monstro para alterar o estado: "
+            )
+            if (escolha == -1) println("${RED}Escolha inválida! Por favor, selecione um número de opção válida.${RESET}")
+        }
+        val monstro = monstrosNoCampo[escolha]
         monstro.estado = if (monstro.estado == "Ataque") "Defesa" else "Ataque"
         println("${monstro.nome} agora está em posição de ${monstro.estado}.")
     }
