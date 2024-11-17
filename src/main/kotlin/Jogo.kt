@@ -32,6 +32,9 @@ class Jogo(
         println(mensagem)
     }
 
+    /**
+     * Imprime uma mensagem com as regras do jogo
+     */
     private fun imprimirRegrasGerais(){
         val mensagem = """
         
