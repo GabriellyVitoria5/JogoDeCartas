@@ -8,17 +8,17 @@
  * @param baralho O baralho utilizado durante o jogo.
  */
 class Jogo(
-    val jogador1: Jogador,
+    private val jogador1: Jogador,
     private val jogador2: Jogador,
     private val baralho: Baralho
 ) {
-    private var vezJogador = true // Controle sobre qual jogador irá jogar: true - jogador 1, false - jogador 2
-    private var numRodada = 1 // Rastrear a rodada atual
+    private var vezJogador = true // Controle de qual jogador irá jogar: true - jogador 1, false - jogador 2
+    private var numRodada = 1 // Contar rodadas
 
     /**
      * Imprime uma mensagem de boas-vindas para os jogadores
      */
-    fun imprimirMensagemBoasVindas(){
+    private fun imprimirMensagemBoasVindas(){
         val mensagem = """
         
         ${GREEN}--- Boas-vindas ---${RESET}
@@ -32,12 +32,12 @@ class Jogo(
         println(mensagem)
     }
 
-    fun imprimirRegrasGerais(){
+    private fun imprimirRegrasGerais(){
         val mensagem = """
         
         ${GREEN}--- Regras Gerais ---${RESET}
         
-        Após escolher uma opção no menu de jodadas, não é possível cancelar a ação.
+        Após escolher uma opção no menu de jogadas, não é possível cancelar a ação.
         OBS: As únicas exceções são 'Descartar uma carta da mão' e 'Atacar oponente' quando não há monstros no campo, pois o jogador pode tentar posicionar um monstro e tentar atacar novamente.
         
         Não é possível escolher a opção 'Alterar o estado de um monstro (ataque/defesa)' após atacar o oponente. O estado só pode ser alterado na próxima rodada.
@@ -50,7 +50,7 @@ class Jogo(
     /**
      * Imprime as regras do ataque no começo da partida
      */
-    fun imprimirRegrasAtaque(){
+    private fun imprimirRegrasAtaque(){
         val regras = """
             
         ${GREEN}--- Regras de ataque ---${RESET}
@@ -106,8 +106,7 @@ class Jogo(
             turnoJogador(jogador2, MAGENTA)
             if (!jogador1.temVida()) break  // Verifica se o jogador 1 perdeu
 
-            // Incrementa o número do turno após ambos os jogadores jogarem
-            numRodada++
+            numRodada++ // Incrementa o número do turno após ambos os jogadores jogarem
         }
 
         // Verifica o motivo pelo qual o jogo terminou (baralho vazio ou jogador sem vida)
@@ -122,7 +121,7 @@ class Jogo(
      * @param jogador O jogador que está no turno atual.
      * @param cor A cor utilizada para destacar o turno do jogador.
      */
-    fun turnoJogador(jogador: Jogador, cor: String) {
+    private fun turnoJogador(jogador: Jogador, cor: String) {
         // Exibe o turno do jogador atual com a cor especificada
         println("\n${cor}Turno de ${jogador.nome}:${RESET}")
         println("${cor}Vida ${jogador.vida}${RESET}")
@@ -137,7 +136,7 @@ class Jogo(
             distribuirCartas(jogador)
         }
 
-        // O jogador faz sua jogada
+        // O jogador faz a sua jogada
         jogador.jogar(this)
     }
 
@@ -147,26 +146,24 @@ class Jogo(
      *
      * @param jogador O jogador que receberá as cartas.
      */
-    fun distribuirCartas(jogador: Jogador) {
+    private fun distribuirCartas(jogador: Jogador) {
         val maxCartasPorJogador = 5
 
         // Se o jogador não tiver cartas na mão, distribui novas
         if (jogador.cartasNaMao.isEmpty()) {
 
-            // Verifica se o baralho tem cartas suficientes
             if (baralho.cartas.isEmpty()) {
-                println("O baralho está sem cartas para comprar.")
+                println("${RED}O baralho está sem cartas para comprar.${RESET}")
                 return
             }
 
-            println("\nDistribuindo 5 cartas para ${jogador.nome}...")
-
             // Distribui as cartas ao jogador
+            println("\nDistribuindo 5 cartas para ${jogador.nome}...")
             for (i in 1..maxCartasPorJogador) {
                 if (baralho.cartas.isNotEmpty()) {
                     jogador.comprarCarta(baralho.cartas)
                 } else {
-                    println("O baralho ficou sem cartas durante a distribuição para ${jogador.nome}.")
+                    println("$YELLOW O baralho ficou sem cartas durante a distribuição para ${jogador.nome}${RESET}.")
                     break
                 }
             }
@@ -198,13 +195,11 @@ class Jogo(
      * @param op A opção escolhida pelo jogador.
      */
     fun processarJogadas(jogador: Jogador, op: String) {
-
         // Verificar se a jogada já foi realizada
         if (op in jogador.jogadasEscolhidas) {
             println("${YELLOW}Você já escolheu essa opção nesta rodada. Por favor, escolha outra.${RESET}")
             return
         }
-
         when (op.lowercase()) {
             "a" -> {
                 println("${jogador.nome} escolheu posicionar um novo monstro no tabuleiro.")
@@ -228,7 +223,6 @@ class Jogo(
                     jogador.jogadasEscolhidas.add(op)
                     return
                 }
-
                 println("${jogador.nome} escolheu realizar um ataque contra o oponente.")
                 if (vezJogador) {
                     jogador.atacarOponente(jogador2, this) // Jogador 1 ataca jogador 2
@@ -308,7 +302,7 @@ class Jogo(
                     else -> { // Empate no ataque: defesa irá desempatar
                         val ataquePerdidoCalculado = (monstroOponente.ataque * 0.1).toInt()
                         when{
-                            monstroAtacante.defesa > monstroOponente.ataque ->{ // Atacante perde 10% deataque
+                            monstroAtacante.defesa > monstroOponente.ataque ->{ // Atacante perde 10% de ataque
                                 monstroOponente.ataque -= ataquePerdidoCalculado
                                 println("\n${GREEN}Os dois monstros são igualmente fortes! Mas seu monstro ${monstroAtacante.nome} tinha mais defesa para resistir a luta e consegue tirar $ataquePerdidoCalculado pontos de ataque do monstro do oponente${RESET}")
                             }
@@ -334,7 +328,7 @@ class Jogo(
                     }
                     diferenca < 0 -> { // O atacante perde o combate e seu ataque é reduzido
                         monstroAtacante.ataque += diferenca // Subtrai o valor absoluto da diferença
-                        println("\n${YELLOW}O ataque falhou, pois ${monstroAtacante.nome} não é forte o suficiente para superar as defesas de ${monstroOponente.nome}. Seu monstro perde $diferenca pontos de ataque durante a luta!${RESET}")
+                        println("\n${YELLOW}O ataque falhou, pois ${monstroAtacante.nome} não é forte o suficiente para superar as defesas de ${monstroOponente.nome}. Seu monstro perde ${-diferenca} pontos de ataque durante a luta!${RESET}")
                     }
                     else -> { // Empate: Monstro do jogador atual perde 10% pontos de ataque, e monstro do oponente perde 10% pontos de defesa
                         val ataquePerdidoCalculado = (monstroAtacante.ataque * 0.1).toInt()

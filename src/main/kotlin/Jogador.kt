@@ -126,7 +126,8 @@ class Jogador(
     fun mostrarMao() {
         println("\n$nome tem as seguintes cartas na mão:")
         if (cartasNaMao.isEmpty()) {
-            println("Nenhuma carta na mão")
+            println("${YELLOW}Nenhuma carta na mão${RESET}")
+            println("---------------------------------------------")
             return
         }
         println("\nTipo | Nome | Descrição | Ataque | Defesa | Estado do monstro")
@@ -142,7 +143,7 @@ class Jogador(
     fun mostrarMonstroTabuleiro() {
         println("\nMonstros no tabuleiro de $nome")
         if (monstrosNoCampo.isEmpty()) {
-            println("Nenhum monstro posicionado")
+            println("${YELLOW}Nenhum monstro posicionado${RESET}")
             println("---------------------------------------------")
             return
         }
@@ -204,7 +205,7 @@ class Jogador(
             }
         }
 
-        println("${monstroEscolhido.nome} foi posicionado em estado de ${monstroEscolhido.estado}.")
+        println("${GREEN}${monstroEscolhido.nome} foi posicionado em estado de ${monstroEscolhido.estado}${RESET}.")
     }
 
     /**
@@ -213,7 +214,7 @@ class Jogador(
      */
     fun equiparMonstro() {
         if (monstrosNoCampo.isEmpty()) {
-            println("\nVocê não possui monstros no campo para equipar.")
+            println("\n${YELLOW}Você não possui monstros no campo para equipar.${RESET}")
             return
         }
 
@@ -254,13 +255,13 @@ class Jogador(
             when (readlnOrNull()?.lowercase()) {
                 "a" -> {
                     monstroEscolhido.ataque += equipamentoEscolhido.ataque
-                    println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.ataque} de ataque.")
+                    println("${GREEN}\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.ataque} de ataque.${RESET}")
                     break
                 }
 
                 "d" -> {
                     monstroEscolhido.defesa += equipamentoEscolhido.defesa
-                    println("\n${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa.")
+                    println("\n${GREEN}${monstroEscolhido.nome} foi equipado com ${equipamentoEscolhido.nome}, recebendo +${equipamentoEscolhido.defesa} de defesa.${RESET}")
                     break
                 }
                 else -> println("${RED}Escolha inválida. Por favor, escolha 'A' ou 'D'.${RESET}")
@@ -334,6 +335,6 @@ class Jogador(
         }
         val monstro = monstrosNoCampo[escolha]
         monstro.estado = if (monstro.estado == "Ataque") "Defesa" else "Ataque"
-        println("${monstro.nome} agora está em posição de ${monstro.estado}.")
+        println("${GREEN}${monstro.nome} agora está em posição de ${monstro.estado}.${RESET}")
     }
 }
